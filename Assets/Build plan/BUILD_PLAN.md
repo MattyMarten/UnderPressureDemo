@@ -50,7 +50,7 @@ The demo is one run of four rooms, 40 questions, about 10 to 15 minutes. No mone
 Every room follows the same rhythm: **question → choice → result → transition → next question.** These systems are built once and used by every room.
 
 - [ ] Question flow, with a transition step each room fills in its own way
-- [ ] Timer: starts after she finishes speaking, 20 down to 10 seconds per part
+- [ ] Timer (not in the office): starts after she finishes speaking, 20 down to 10 seconds per part
 - [ ] Questions loaded from CSV files
 - [ ] Choice log: every decision recorded as an event, with the question's tags
 - [ ] Voice line player with subtitles
@@ -62,6 +62,8 @@ Every room follows the same rhythm: **question → choice → result → transit
 - [ ] Desk, papers, green and red stamps
 - [ ] One-statement papers (accept or decline)
 - [ ] Two-option papers (stamping one accepts it and declines the other)
+- [ ] Four-choice papers (only one can be accepted)
+- [ ] Stamping: green once, red many, paper done when every option is stamped
 - [ ] Paper goes away, new one appears
 - [ ] 10 questions in CSV
 - [ ] Ending line: "Great, now let's start the main test."
@@ -182,5 +184,6 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-14 | CSV question format agreed. Office: four-choice papers, stamping rules, no timer, secret title for declining everything. |
 | 2026-10-14 | Plan changed: demo first, rooms in order, two projects. |
 | 2026-10-13 | Build plan created. |
