@@ -13,7 +13,7 @@ public class QuestionFlow : MonoBehaviour
         StartCoroutine(RunRoom());
     }
 
-    IEnumerator RunRoom()
+        IEnumerator RunRoom()
     {
         List<QuestionData> questions = QuestionLoader.Load(questionFile);
 
@@ -22,16 +22,17 @@ public class QuestionFlow : MonoBehaviour
             yield return room.AskQuestion(question);
             int choice = room.ChosenOption;
 
-            // The choice log will be called here later
+            ChoiceLog.Record(questionFile.name, question, choice);
             Debug.Log(question.id + " → " + ChoiceName(choice));
 
             yield return room.ShowResult(question, choice);
             yield return room.Transition(question);
         }
 
-        Debug.Log("Room finished.");
+        RoomSummary summary = ChoiceLog.FinishRoom(questionFile.name);
+        Debug.Log("Room finished. " + summary.Describe());
     }
-
+    
     static string ChoiceName(int choice)
     {
         if (choice == RoomBase.NoChoice)

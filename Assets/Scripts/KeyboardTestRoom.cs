@@ -35,6 +35,7 @@ public class KeyboardTestRoom : RoomBase
 
     public override IEnumerator Transition(QuestionData question)
     {
+        Debug.Log("Stamped!");
         Debug.Log("(the paper goes away)");
         yield return new WaitForSeconds(0.5f);
     }
