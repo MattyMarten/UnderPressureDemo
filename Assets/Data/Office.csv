@@ -1,4 +1,4 @@
 id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,voice
 test_01,1,pair,How do you want to be paid?,Cash,Bank,,,,,,,test_01_q
 test_02,2,single,I always tell the truth.,,,,,,,,,test_02_q
-test_03,0,pick,"Who gets the last seat, if anyone?",The doctor,The child,The old man,,useful,more lives,,,test_03_q
+test_03,3,pick,"Who gets the last seat, if anyone?",The doctor,The child,The old man,,useful,more lives,,,test_03_q
