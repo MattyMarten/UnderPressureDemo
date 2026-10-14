@@ -35,14 +35,14 @@ The demo is one run of four rooms, 40 questions, about 10 to 15 minutes. No mone
 
 ## Stage 0 — Project setup
 
-- [ ] Create a new 3D (URP) project in Unity 6000.4.0f1
-- [ ] Create the GitHub repository
-- [ ] Add a Unity `.gitignore` (so Library, Temp and other generated folders are not uploaded)
-- [ ] Set up Git LFS for large files (audio, models, textures)
-- [ ] First commit and push
-- [ ] Folder structure (Scripts, Scenes, Data, Audio, Art, Prefabs)
-- [ ] Check that the Input System package is active
-- [ ] Add this build plan to the project
+- [x] Create a new 3D (URP) project in Unity 6000.4.0f1
+- [x] Create the GitHub repository
+- [x] Add a Unity `.gitignore` (so Library, Temp and other generated folders are not uploaded)
+- [x] Set up Git LFS for large files (audio, models, textures)
+- [x] First commit and push
+- [x] Folder structure (Scripts, Scenes, Data, Audio, Art, Prefabs)
+- [x] Check that the Input System package is active
+- [x] Add this build plan to the project
 - [ ] First physical backup
 
 ## Stage 1 — Core systems, built with the office
