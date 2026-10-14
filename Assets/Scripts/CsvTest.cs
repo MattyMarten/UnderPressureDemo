@@ -1,16 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-// Temporary test: prints every row of a CSV file to the Console.
+// Temporary test: loads the questions and prints them to the Console.
 public class CsvTest : MonoBehaviour
 {
     public TextAsset csvFile;
 
     void Start()
     {
-        var rows = CsvReader.Read(csvFile.text);
-        foreach (string[] row in rows)
+        List<QuestionData> questions = QuestionLoader.Load(csvFile);
+        foreach (QuestionData q in questions)
         {
-            Debug.Log(row.Length + " cells: " + string.Join(" | ", row));
+            string line = q.order + ". " + q.id + " (" + q.type + "): " + q.text;
+            foreach (QuestionOption o in q.options)
+                line += "\n   - " + o.text + " [" + string.Join(", ", o.tags) + "]";
+            Debug.Log(line);
         }
     }
 }
