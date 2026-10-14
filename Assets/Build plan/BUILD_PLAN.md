@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Build plan written. Nothing built yet.
-- **Next step:** Stage 0 — create the demo project and set up Git and GitHub.
+- **Where we are:** Stage 0 done (except the first physical backup).
+- **Next step:** Stage 1 — core systems, starting with the office.
 
 ---
 
