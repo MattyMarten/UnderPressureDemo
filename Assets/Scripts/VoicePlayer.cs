@@ -11,6 +11,7 @@ public class VoicePlayer : MonoBehaviour
     public AudioSource audioSource;
     public TMP_Text subtitleText;
     public string language = "en";       // which subtitle column to show
+    public float gapBetweenLines = 0.3f; // silence between clips in PlayAll, in seconds
 
     // Folders inside any Resources folder. Every clip in them is loaded.
     public List<string> clipFolders = new List<string> { "Voice/Office", "Voice/Johnny" };
@@ -63,6 +64,16 @@ public class VoicePlayer : MonoBehaviour
         yield return new WaitForSeconds(clip.length);
 
         subtitleText.text = "";
+    }
+
+    // Plays several clips one after another, with a short gap between them
+    public IEnumerator PlayAll(IEnumerable<string> ids)
+    {
+        foreach (string id in ids)
+        {
+            yield return Play(id);
+            yield return new WaitForSeconds(gapBetweenLines);
+        }
     }
 
     // The subtitle in the chosen language, or in English if that one is empty

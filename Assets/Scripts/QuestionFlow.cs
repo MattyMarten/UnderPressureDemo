@@ -7,6 +7,11 @@ public class QuestionFlow : MonoBehaviour
 {
     public TextAsset questionFile;
     public RoomBase room;
+    public VoicePlayer voicePlayer;
+
+    // Clip ids from VoiceLines.csv, played before the first and after the last question
+    public List<string> introLines = new List<string>();
+    public List<string> endLines = new List<string>();
 
     void Start()
     {
@@ -16,6 +21,8 @@ public class QuestionFlow : MonoBehaviour
         IEnumerator RunRoom()
     {
         List<QuestionData> questions = QuestionLoader.Load(questionFile);
+
+        yield return voicePlayer.PlayAll(introLines);
 
         foreach (QuestionData question in questions)
         {
@@ -28,6 +35,8 @@ public class QuestionFlow : MonoBehaviour
             yield return room.ShowResult(question, choice);
             yield return room.Transition(question);
         }
+
+        yield return voicePlayer.PlayAll(endLines);
 
         RoomSummary summary = ChoiceLog.FinishRoom(questionFile.name);
         Debug.Log("Room finished. " + summary.Describe());
