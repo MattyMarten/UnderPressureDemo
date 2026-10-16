@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 0 done (except the first physical backup).
-- **Next step:** Stage 1 — core systems, starting with the office.
+- **Where we are:** Stage 1 — office voice script and AI placeholder voices done.
+- **Next step:** Johnny's sounds, then the voice line player with subtitles.
 
 ---
 
@@ -49,30 +49,34 @@ The demo is one run of four rooms, 40 questions, about 10 to 15 minutes. No mone
 
 Every room follows the same rhythm: **question → choice → result → transition → next question.** These systems are built once and used by every room.
 
-- [ ] Question flow, with a transition step each room fills in its own way
+- [x] Question flow, with a transition step each room fills in its own way
 - [ ] Timer (not in the office): starts after she finishes speaking, 20 down to 10 seconds per part
-- [ ] Questions loaded from CSV files
-- [ ] Choice log: every decision recorded as an event, with the question's tags
+- [x] Questions loaded from CSV files
+- [x] Choice log: every decision recorded as an event, with the question's tags
 - [ ] Voice line player with subtitles
+- [x] Office voice script written ("Demo voice lines: Office and ride")
+- [x] Office voice lines: AI placeholders
+- [ ] Johnny's sounds (mumbles, breathing), recorded by me
+- [ ] Final voices recorded by real people (later)
 - [ ] Controls shown on screen or on objects
 - [ ] Debug tools: jump to any room, skip questions
 
 ### The office (grey boxes)
 
 - [ ] Desk, papers, green and red stamps
-- [ ] One-statement papers (accept or decline)
-- [ ] Two-option papers (stamping one accepts it and declines the other)
-- [ ] Four-choice papers (only one can be accepted)
-- [ ] Stamping: green once, red many, paper done when every option is stamped
-- [ ] Paper goes away, new one appears
-- [ ] 10 questions in CSV
+- [ ] One-paper questions (accept or decline)
+- [ ] Questions with 2 to 4 papers, one option on each (only one can be accepted)
+- [ ] Stamping: green once per question, red as often as needed; the question is done when every paper has a stamp
+- [ ] Papers go away, next question appears
+- [ ] Johnny's mouth sewn shut: mumbles and breathing only
+- [ ] 15 questions in CSV
 - [ ] Ending line: "Great, now let's start the main test."
 
 ## Stage 2 — The game show
 
 - [ ] Foot button
-- [ ] First three questions free, then one finger per press
-- [ ] Fingers taken from one hand first, then the other (at most seven)
+- [ ] First one or three questions free (to decide), then one finger per press
+- [ ] Fingers taken from one hand first, then the other (at most seven, or nine with one free press)
 - [ ] Missing fingers and bleeding stay for the rest of the run
 - [ ] Host voice and jingle
 - [ ] Flashing lights, with a reduce-flashing setting
@@ -174,6 +178,8 @@ Order to be decided (see "To decide").
 ## To decide
 
 - [ ] **Tower with missing fingers (demo).** If the game show took five fingers from one hand, can that hand still hold a rope?
+- [ ] **Free presses (demo).** One or three free presses at the game show?
+- [ ] **Office answer times (demo).** Do they count for a modifier? What does declining every paper make him?
 - [ ] **Demo design points.** See "Still to decide for the demo" in the game idea document.
 - [ ] **Bell Tower grab window (full game).** Does the 10-second rope grab happen before her line, or during it?
 - [ ] **Test order for the full game** (decide when the demo is done).
@@ -184,6 +190,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-16 | Office set to 15 questions (1 to 4 papers each). Voice script and AI placeholder voices done. One fixed voice version per line. Johnny's mouth is sewn in the demo. Host is in the demo. "Every paper needs a stamp" line added. |
 | 2026-10-14 | CSV question format agreed. Office: four-choice papers, stamping rules, no timer, secret title for declining everything. |
 | 2026-10-14 | Plan changed: demo first, rooms in order, two projects. |
 | 2026-10-13 | Build plan created. |
