@@ -9,7 +9,7 @@ Tick a box by changing `- [ ]` to `- [x]`.
 ## Current status
 
 - **Where we are:** Stage 1 — office voice script and AI placeholder voices done.
-- **Next step:** Johnny's sounds, then the voice line player with subtitles.
+- **Next step:** the voice line player with subtitles
 
 ---
 
@@ -56,7 +56,7 @@ Every room follows the same rhythm: **question → choice → result → transit
 - [ ] Voice line player with subtitles
 - [x] Office voice script written ("Demo voice lines: Office and ride")
 - [x] Office voice lines: AI placeholders
-- [ ] Johnny's sounds (mumbles, breathing), recorded by me
+- [X] Johnny's sounds (mumbles, breathing), recorded by me -PAIN for game show still to do
 - [ ] Final voices recorded by real people (later)
 - [ ] Controls shown on screen or on objects
 - [ ] Debug tools: jump to any room, skip questions

@@ -1,0 +1,50 @@
+id,speaker,en
+JOH_MUM_WAKE,Johnny,
+JOH_MUM_PROTEST,Johnny,
+JOH_MUM_BEG,Johnny,
+JOH_BREATH_FAST,Johnny,
+JOH_BREATH_SLOW,Johnny,
+OFF_INTRO_01a,Her,"Hello, Johnny."
+OFF_INTRO_01b,Her,You're awake. Good.
+OFF_INTRO_MOUTH,Her,"I sewed your mouth shut. Here, what you say doesn't matter. What you do does."
+OFF_INTRO_02b,Her,"I have a short test for you, Johnny."
+OFF_INTRO_03b,Her,You're in an office. Nothing here will hurt you.
+OFF_INTRO_04a,Her,Think of it as a job interview.
+OFF_INTRO_05a,Her,"It's just a simple test, Johnny."
+OFF_RULES_01a,Her,Let's begin.
+OFF_RULES_02,Her,"Here is a statement. ""I only tell the truth."""
+OFF_RULES_03a,Her,"Pick up the green stamp, and accept it."
+OFF_RULES_04,Her,"Thank you, Johnny."
+OFF_RULES_05,Her,"Here is a red stamp, for declining."
+OFF_RULES_06,Her,Every paper needs a stamp. The green stamp works once per question. Remember that.
+OFF_RULES_07a,Her,There are no wrong answers. Just be honest.
+OFF_Q02,Her,"""Stealing should always be punished."""
+OFF_Q03,Her,"""I agree to take part in this test."""
+OFF_Q04,Her,"Two papers this time. Coffee, or tea?"
+OFF_Q05,Her,"Lie to a friend to spare their feelings, or tell them the truth and hurt them?"
+OFF_Q06,Her,"Your right hand, or your left leg. Which would you choose to lose?"
+OFF_Q07,Her,"""I work well under pressure."""
+OFF_Q08,Her,"Three papers now. Your sight, your hearing, or your voice. Which would you give up?"
+OFF_Q09,Her,One dose of medicine is left. A child. A doctor who can save many. Your brother. Who gets it?
+OFF_Q10,Her,One seat on a lifeboat. An old man. A pregnant woman. Or you.
+OFF_Q11,Her,"""Some people deserve to die."""
+OFF_Q12,Her,"Four papers. Under pressure, what do you do? Stay calm. Freeze. Panic. Or you don't know yet."
+OFF_Q13,Her,Keep one alive. A murderer. A liar. A thief. A coward.
+OFF_Q14,Her,Choose one to die. Your mother. Your father. Your brother. A stranger.
+OFF_Q15,Her,"Last one. ""I would give a finger to save a stranger."""
+OFF_REACT_02,Her,Noted.
+OFF_REACT_05,Her,I see.
+OFF_REACT_07,Her,Interesting.
+OFF_REACT_08,Her,I'll keep that in mind.
+OFF_REACT_Q03_ACC,Her,Thank you. I'll keep this one.
+OFF_REACT_Q03_DEC,Her,Noted.
+OFF_REACT_Q05_LIE,Her,Good to know.
+OFF_REACT_Q08_VOICE,Her,You aren't using that one anyway.
+OFF_REACT_Q12_CONTRA,Her,You said you work well under pressure.
+OFF_REACT_Q12_DK,Her,Let's find out.
+OFF_REACT_DECALL_1,Her,None of them. I see.
+OFF_REACT_DECALL_2,Her,None again.
+OFF_REACT_Q15,Her,I'll remember that.
+OFF_END_01a,Her,"Thank you, Johnny. That's all the papers."
+OFF_END_02a,Her,"Great, now let's start the main test."
+OFF_END_04a,Her,Here we go.
