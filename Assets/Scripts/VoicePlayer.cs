@@ -1,20 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 
 // Plays one voice clip and shows its subtitle while it plays.
 // Rooms wait for it with: yield return voicePlayer.Play("OFF_Q04");
+// Johnny's lines go to JohnnyVoice and don't wait. "wait:1.5" is a pause of 1.5 seconds.
 public class VoicePlayer : MonoBehaviour
 {
     public TextAsset voiceLinesFile;     // VoiceLines.csv
     public AudioSource audioSource;
     public TMP_Text subtitleText;
+    public JohnnyVoice johnnyVoice;      // his own channel
     public string language = "en";       // which subtitle column to show
     public float gapBetweenLines = 0.3f; // silence between clips in PlayAll, in seconds
 
     // Folders inside any Resources folder. Every clip in them is loaded.
-    public List<string> clipFolders = new List<string> { "Voice/Office", "Voice/Johnny" };
+    // Johnny's folder is not here: JohnnyVoice loads his clips.
+    public List<string> clipFolders = new List<string> { "Voice/Office" };
 
     public string testLine = "OFF_Q04";  // for the right-click test below
 
@@ -50,6 +54,20 @@ public class VoicePlayer : MonoBehaviour
     // Plays one clip, shows its subtitle, and waits until the clip has ended
     public IEnumerator Play(string id)
     {
+        // A pause: "wait:1.5"
+        if (id.StartsWith("wait:"))
+        {
+            yield return new WaitForSeconds(WaitSeconds(id));
+            yield break;
+        }
+
+        // His lines play on his own channel, and we don't wait for them
+        if (IsJohnny(id))
+        {
+            johnnyVoice.Play(id);
+            yield break;
+        }
+
         if (!clipsByName.ContainsKey(id))
         {
             Debug.LogWarning("VoicePlayer: no audio clip called \"" + id + "\". Is it in one of the clip folders?");
@@ -66,14 +84,35 @@ public class VoicePlayer : MonoBehaviour
         subtitleText.text = "";
     }
 
-    // Plays several clips one after another, with a short gap between them
+    // Plays several clips one after another, with a short gap after each of her lines
     public IEnumerator PlayAll(IEnumerable<string> ids)
     {
         foreach (string id in ids)
         {
             yield return Play(id);
-            yield return new WaitForSeconds(gapBetweenLines);
+
+            // No gap after a pause or one of his sounds, so they add no extra time
+            if (!id.StartsWith("wait:") && !IsJohnny(id))
+                yield return new WaitForSeconds(gapBetweenLines);
         }
+    }
+
+    // True if VoiceLines.csv says this line is Johnny's
+    bool IsJohnny(string id)
+    {
+        return lines.ContainsKey(id) && lines[id].speaker == "Johnny";
+    }
+
+    // "wait:1.5" → 1.5. Always reads a dot as the decimal sign, whatever the computer's language.
+    float WaitSeconds(string id)
+    {
+        string number = id.Substring("wait:".Length).Trim();
+        float seconds;
+        if (float.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out seconds))
+            return seconds;
+
+        Debug.LogWarning("VoicePlayer: \"" + id + "\" is not a pause. Write it like wait:1.5");
+        return 0f;
     }
 
     // The subtitle in the chosen language, or in English if that one is empty
