@@ -1,7 +1,7 @@
 id,speaker,en
-JOH_MUM_WAKE,Johnny,
-JOH_MUM_PROTEST,Johnny,
-JOH_MUM_BEG,Johnny,
+JOH_MUM_WAKE,Johnny,panicked mumbling
+JOH_MUM_PROTEST,Johnny,muffled protest
+JOH_MUM_BEG,Johnny,muffled begging
 JOH_BREATH_FAST,Johnny,
 JOH_BREATH_SLOW,Johnny,
 OFF_INTRO_01a,Her,"Hello, Johnny."

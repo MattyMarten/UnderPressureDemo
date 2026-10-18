@@ -64,7 +64,7 @@ public class VoicePlayer : MonoBehaviour
         // His lines play on his own channel, and we don't wait for them
         if (IsJohnny(id))
         {
-            johnnyVoice.Play(id);
+            johnnyVoice.Play(id, Subtitle(id));
             yield break;
         }
 
