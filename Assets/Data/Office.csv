@@ -1,4 +1,4 @@
-id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,before,voice,react
-test_01,1,pair,Coffee or tea?,Coffee,Tea,,,,,,,,OFF_Q04|OFF_RULES_06,any:OFF_REACT_02
-test_02,2,single,I work well under pressure.,,,,,,,,,OFF_RULES_07a,OFF_Q07,A:OFF_REACT_08|B:OFF_REACT_02
-test_03,3,pick,"Medicine: who gets it?",The child,The doctor,Your brother,,,useful,family,,,OFF_Q09,C:OFF_REACT_05|none:OFF_REACT_DECALL_1
+id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,tagsNone,before,voice,react
+test_01,1,pair,Coffee or tea?,Coffee,Tea,,,,,,,,,OFF_Q04|OFF_RULES_06,any:OFF_REACT_02
+test_02,2,single,I work well under pressure.,,,,,,,,,,OFF_RULES_07a,OFF_Q07,A:OFF_REACT_08|B:OFF_REACT_02
+test_03,3,pick,"Medicine: who gets it?",The child,The doctor,Your brother,,,useful,family,,clever|more lives,,OFF_Q09,C:OFF_REACT_05|none:OFF_REACT_DECALL_1

@@ -13,10 +13,11 @@ public static class QuestionLoader
     const int Text = 3;
     const int OptionA = 4;   // options A-D are columns 4, 5, 6, 7
     const int TagsA = 8;     // tags A-D are columns 8, 9, 10, 11
-    const int Before = 12;
-    const int Voice = 13;
-    const int React = 14;
-    const int ColumnCount = 15;
+    const int TagsNone = 12; // tags for declining everything
+    const int Before = 13;
+    const int Voice = 14;
+    const int React = 15;
+    const int ColumnCount = 16;
 
     public static List<QuestionData> Load(TextAsset file)
     {
@@ -64,6 +65,7 @@ public static class QuestionLoader
         var q = new QuestionData();
         q.id = row[Id].Trim();
         q.text = row[Text].Trim();
+        q.tagsNone = SplitList(row[TagsNone]);
         q.before = SplitList(row[Before]);
         q.voice = SplitList(row[Voice]);
 
@@ -103,6 +105,9 @@ public static class QuestionLoader
                 return null;
             }
         }
+
+        if (q.type == QuestionType.Single && q.tagsNone.Length > 0)
+            Debug.LogWarning(where + ": a single paper can't be declined twice. Use tagsB for declining it, not tagsNone.");
 
         if (q.voice.Length == 0)
             Debug.LogWarning(where + ": no voice clip yet.");

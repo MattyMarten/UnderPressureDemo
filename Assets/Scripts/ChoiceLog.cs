@@ -22,7 +22,7 @@ public static class ChoiceLog
         record.choice = choice;
 
         if (choice == RoomBase.NoChoice)
-            record.tags = new string[0];   // declining everything gives no tags
+            record.tags = question.tagsNone;   // declining everything: the tagsNone column
         else
             record.tags = question.options[choice].tags;
 

@@ -25,6 +25,7 @@ public class QuestionData
     public QuestionType type;
     public string text;         // the statement or question
     public List<QuestionOption> options = new List<QuestionOption>();
+    public string[] tagsNone;   // tags given when he declines every option
 
     // Voice clip ids from VoiceLines.csv
     public string[] before;     // played before the question
