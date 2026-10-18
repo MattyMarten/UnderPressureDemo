@@ -13,8 +13,10 @@ public static class QuestionLoader
     const int Text = 3;
     const int OptionA = 4;   // options A-D are columns 4, 5, 6, 7
     const int TagsA = 8;     // tags A-D are columns 8, 9, 10, 11
-    const int Voice = 12;
-    const int ColumnCount = 13;
+    const int Before = 12;
+    const int Voice = 13;
+    const int React = 14;
+    const int ColumnCount = 15;
 
     public static List<QuestionData> Load(TextAsset file)
     {
@@ -62,7 +64,8 @@ public static class QuestionLoader
         var q = new QuestionData();
         q.id = row[Id].Trim();
         q.text = row[Text].Trim();
-        q.voice = row[Voice].Trim();
+        q.before = SplitList(row[Before]);
+        q.voice = SplitList(row[Voice]);
 
         if (!int.TryParse(row[Order].Trim(), out q.order))
         {
@@ -101,10 +104,50 @@ public static class QuestionLoader
             }
         }
 
-        if (q.voice == "")
+        if (q.voice.Length == 0)
             Debug.LogWarning(where + ": no voice clip yet.");
 
+        ReadReactions(q, row[React], where);
         return q;
+    }
+
+    // Reads a cell like "A:OFF_REACT_08|B:OFF_REACT_02|none:OFF_REACT_DECALL_1"
+    static void ReadReactions(QuestionData q, string cell, string where)
+    {
+        foreach (string entry in SplitList(cell))
+        {
+            int colon = entry.IndexOf(':');
+            if (colon < 0)
+            {
+                Debug.LogWarning(where + ": the reaction \"" + entry + "\" has no \":\". Write it like A:OFF_REACT_02.");
+                continue;
+            }
+
+            string key = entry.Substring(0, colon).Trim();
+            string clip = entry.Substring(colon + 1).Trim();
+
+            if (!IsReactionKey(key, q.options.Count))
+            {
+                Debug.LogWarning(where + ": unknown reaction key \"" + key + "\". Use A to D (only as many as the options), none or any.");
+                continue;
+            }
+            if (q.react.ContainsKey(key))
+            {
+                Debug.LogWarning(where + ": the reaction key \"" + key + "\" is used twice.");
+                continue;
+            }
+            q.react.Add(key, clip);
+        }
+    }
+
+    // A, B, C, D (only as many as the question has options), none or any
+    static bool IsReactionKey(string key, int optionCount)
+    {
+        if (key == "none" || key == "any")
+            return true;
+        if (key.Length == 1 && key[0] >= 'A' && key[0] < 'A' + optionCount)
+            return true;
+        return false;
     }
 
     // Makes one option and cuts its tags at the | sign
@@ -113,13 +156,19 @@ public static class QuestionLoader
         var option = new QuestionOption();
         option.text = text;
 
-        var tags = new List<string>();
-        foreach (string tag in tagCell.Split('|'))
-        {
-            if (tag.Trim() != "")
-                tags.Add(tag.Trim());
-        }
-        option.tags = tags.ToArray();
+        option.tags = SplitList(tagCell);
         return option;
+    }
+
+    // Cuts a cell at the | sign: "a | b||c" → ["a", "b", "c"]. An empty cell gives an empty list.
+    static string[] SplitList(string cell)
+    {
+        var parts = new List<string>();
+        foreach (string part in cell.Split('|'))
+        {
+            if (part.Trim() != "")
+                parts.Add(part.Trim());
+        }
+        return parts.ToArray();
     }
 }

@@ -25,5 +25,11 @@ public class QuestionData
     public QuestionType type;
     public string text;         // the statement or question
     public List<QuestionOption> options = new List<QuestionOption>();
-    public string voice;        // name of her voice clip
+
+    // Voice clip ids from VoiceLines.csv
+    public string[] before;     // played before the question
+    public string[] voice;      // the question itself, can be several clips
+
+    // Her reaction after the answer: "A", "B", "C", "D", "none" or "any" → clip id
+    public Dictionary<string, string> react = new Dictionary<string, string>();
 }

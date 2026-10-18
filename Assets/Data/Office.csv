@@ -1,4 +1,4 @@
-id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,voice
-test_01,1,pair,How do you want to be paid?,Cash,Bank,,,,,,,test_01_q
-test_02,2,single,I always tell the truth.,,,,,,,,,test_02_q
-test_03,3,pick,"Who gets the last seat, if anyone?",The doctor,The child,The old man,,useful,more lives,,,test_03_q
+id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,before,voice,react
+test_01,1,pair,Coffee or tea?,Coffee,Tea,,,,,,,,OFF_Q04|OFF_RULES_06,any:OFF_REACT_02
+test_02,2,single,I work well under pressure.,,,,,,,,,OFF_RULES_07a,OFF_Q07,A:OFF_REACT_08|B:OFF_REACT_02
+test_03,3,pick,"Medicine: who gets it?",The child,The doctor,Your brother,,,useful,family,,,OFF_Q09,C:OFF_REACT_05|none:OFF_REACT_DECALL_1
