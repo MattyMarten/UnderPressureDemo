@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 1 — voice line player done: subtitles, `before`/`voice`/`react` columns, `tagsNone`, the 15 real office questions, and her two special reactions in `OfficeRoom`.
-- **Next step:** Johnny on his own audio channel, so his mumbles and breathing play at the same time as her voice. Then his captions, then his breathing.
+- **Where we are:** Stage 1 — voice player done, Johnny has his own audio channel (`JohnnyVoice`) and his captions. `wait:` entries control the timing.
+- **Next step:** Johnny's breathing with stress levels (see "How Johnny's breathing works"). The office uses only levels 0 and 1.
 
 ---
 
@@ -61,8 +61,8 @@ Every room follows the same rhythm: **question → choice → result → transit
   - [x] `tagsNone` column (tags for declining everything)
   - [x] 15 real office questions in `Office.csv`
   - [x] Her special reactions as code in `OfficeRoom`: the Q12 contradiction and the second decline-all
-- [ ] Johnny on his own audio channel: his mumbles and breathing play at the same time as her voice, not after it
-- [ ] Johnny's captions: a second subtitle text just above hers, smaller and grey or italic, in square brackets ("[muffled protest]"). Breathing gets a caption only when it changes
+- [x] Johnny on his own audio channel: his mumbles and breathing play at the same time as her voice, not after it
+- [x] Johnny's captions: a second subtitle text just above hers, smaller and grey or italic, in square brackets ("[muffled protest]"). Breathing gets a caption only when it changes
 - [ ] Johnny's breathing: stress levels set by the script (see "How Johnny's breathing works" below)
 - [ ] Tune the intro: pause lengths between her lines, how much Johnny mumbles
 - [x] Office voice script written ("Demo voice lines: Office and ride")
@@ -214,6 +214,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-18 | Johnny's own channel and captions built. `JohnnyVoice` has its own AudioSource and caption text; `VoicePlayer` sends every line whose speaker is `Johnny` there and doesn't wait for it, so she talks over him. `wait:1.5` in any clip list (intro, end, CSV columns) is a pause; the intro starts with `JOH_MUM_WAKE`, `wait:3`. Captions come from `VoiceLines.csv` without brackets, the code adds them; an empty cell means no caption. His caption stays for his whole clip, independent of her subtitle. Subtitle and caption rebuilt as UI TextMeshPro (not the 3D kind); Canvas Scaler match 0.5. Mumble captions are placeholders. |
 | 2026-10-18 | Her special reactions built. `RoomBase` has a new `PickReaction` a room can replace; `OfficeRoom` uses it. Q12 contradiction ("You said you work well under pressure.") plays only if he accepted Q7 and picks B (freeze) or C (panic) on Q12. Decline-all: silence on questions with no `none` reaction, then "None of them. I see.", then "None again." `ChoiceLog.Find` looks up an earlier answer. `KeyboardTestRoom` now builds on `OfficeRoom` for testing. Reactions stay fixed: one clip per answer, never random. Q12 keeps "I panic." Input Actions come later, with the real stamping. Claude sends changed scripts as files; I copy them in myself. |
 | 2026-10-18 | Johnny gets his own audio channel so he can mumble and breathe while she talks. His sounds get captions in a second text above hers. Breathing driven by script-set stress levels with random variants per level (see "How Johnny's breathing works"). |
 | 2026-10-16 | Voice player steps 1 to 3 done. Clips live in `Assets/Audio/Resources/Voice/<Room>/`, one folder per room plus a shared `Johnny` folder, each clip in one folder only. Spare clips in `Assets/Audio/Spare` (not in the build). Import settings: mono, Compressed In Memory, Vorbis. |
