@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 
 // Temporary test room: shows questions in the Console and reads answers from the keyboard.
 // Keys 1-4 pick an option, 0 declines everything.
-public class KeyboardTestRoom : RoomBase
+// It is built on OfficeRoom, so it uses the office's special reactions.
+public class KeyboardTestRoom : OfficeRoom
 {
     public override IEnumerator AskQuestion(QuestionData question)
     {

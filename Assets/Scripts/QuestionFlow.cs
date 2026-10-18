@@ -37,7 +37,7 @@ public class QuestionFlow : MonoBehaviour
 
             yield return room.ShowResult(question, choice);
 
-            string reaction = Reaction(question, choice);
+            string reaction = room.PickReaction(question, choice, Reaction(question, choice));
             if (reaction != null)
                 yield return voicePlayer.Play(reaction);
 

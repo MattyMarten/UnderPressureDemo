@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 1 — voice line player half done: `VoiceLines.csv` with subtitles, `VoicePlayer` (loads clips from `Resources/Voice/...` folders), intro and end lines on `QuestionFlow`.
-- **Next step:** step 4 of the voice player: `before`, `voice` and `react` columns in the question CSV. Then `tagsNone`, then the 15 real office questions.
+- **Where we are:** Stage 1 — voice line player done: subtitles, `before`/`voice`/`react` columns, `tagsNone`, the 15 real office questions, and her two special reactions in `OfficeRoom`.
+- **Next step:** Johnny on his own audio channel, so his mumbles and breathing play at the same time as her voice. Then his captions, then his breathing.
 
 ---
 
@@ -53,13 +53,14 @@ Every room follows the same rhythm: **question → choice → result → transit
 - [ ] Timer (not in the office): starts after she finishes speaking, 20 down to 10 seconds per part
 - [x] Questions loaded from CSV files
 - [x] Choice log: every decision recorded as an event, with the question's tags
-- [ ] Voice line player with subtitles
+- [x] Voice line player with subtitles
   - [x] `VoiceLines.csv` (id, speaker, one column per language) and its loader
   - [x] `VoicePlayer`: plays a clip, shows its subtitle, waits until it ends
   - [x] Intro and end lines as lists on `QuestionFlow`
-  - [ ] `before`, `voice` and `react` columns in the question CSV
-  - [ ] `tagsNone` column (tags for declining everything)
-  - [ ] 15 real office questions in `Office.csv`
+  - [x] `before`, `voice` and `react` columns in the question CSV
+  - [x] `tagsNone` column (tags for declining everything)
+  - [x] 15 real office questions in `Office.csv`
+  - [x] Her special reactions as code in `OfficeRoom`: the Q12 contradiction and the second decline-all
 - [ ] Johnny on his own audio channel: his mumbles and breathing play at the same time as her voice, not after it
 - [ ] Johnny's captions: a second subtitle text just above hers, smaller and grey or italic, in square brackets ("[muffled protest]"). Breathing gets a caption only when it changes
 - [ ] Johnny's breathing: stress levels set by the script (see "How Johnny's breathing works" below)
@@ -91,7 +92,7 @@ Agreed 2026-10-18. Not built yet.
 - [ ] Stamping: green once per question, red as often as needed; the question is done when every paper has a stamp
 - [ ] Papers go away, next question appears
 - [ ] Johnny's mouth sewn shut: mumbles and breathing only
-- [ ] 15 questions in CSV
+- [x] 15 questions in CSV
 - [ ] Ending line: "Great, now let's start the main test."
 
 ## Stage 2 — The game show
@@ -205,7 +206,7 @@ Order to be decided (see "To decide").
 - [ ] **Demo design points.** See "Still to decide for the demo" in the game idea document.
 - [ ] **Bell Tower grab window (full game).** Does the 10-second rope grab happen before her line, or during it?
 - [ ] **Test order for the full game** (decide when the demo is done).
-- [ ] **Johnny's stress levels.** How many, and what each one is. First idea: 0 calm, 1 scared, 2 stressed, 3 panic, 4 pain.
+- [ ] **Johnny's stress levels.** How many, and what each one is. First idea: 0 calm, 1 scared, 2 stressed, 3 panic, 4 pain. The office uses only two: 0 (slow breathing) and 1 (fast breathing). The office should stress him, not make him panic.
 
 ---
 
@@ -213,6 +214,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-18 | Her special reactions built. `RoomBase` has a new `PickReaction` a room can replace; `OfficeRoom` uses it. Q12 contradiction ("You said you work well under pressure.") plays only if he accepted Q7 and picks B (freeze) or C (panic) on Q12. Decline-all: silence on questions with no `none` reaction, then "None of them. I see.", then "None again." `ChoiceLog.Find` looks up an earlier answer. `KeyboardTestRoom` now builds on `OfficeRoom` for testing. Reactions stay fixed: one clip per answer, never random. Q12 keeps "I panic." Input Actions come later, with the real stamping. Claude sends changed scripts as files; I copy them in myself. |
 | 2026-10-18 | Johnny gets his own audio channel so he can mumble and breathe while she talks. His sounds get captions in a second text above hers. Breathing driven by script-set stress levels with random variants per level (see "How Johnny's breathing works"). |
 | 2026-10-16 | Voice player steps 1 to 3 done. Clips live in `Assets/Audio/Resources/Voice/<Room>/`, one folder per room plus a shared `Johnny` folder, each clip in one folder only. Spare clips in `Assets/Audio/Spare` (not in the build). Import settings: mono, Compressed In Memory, Vorbis. |
 | 2026-10-16 | Voice player planned. Subtitles live in `VoiceLines.csv` (id, speaker, one column per language, `en` first). Question CSV gets `before`, `voice` and `react` columns, clips split by `\|`; `react` reads like `A:…\|B:…\|none:…\|any:…`, silence if no entry. Q12 contradiction and second decline-all reactions are code in `OfficeRoom`. Intro and end lines are lists on `QuestionFlow`. New `tagsNone` column for declining everything: Q13 `clever`, Q14 `clever\|more lives`. Office tags only on Q9 (doctor `useful`, brother `family`), Q10 (pregnant woman `more lives`, you `self`) and Q14 (stranger `family`). Tags are only for titles; titles decided after the tests are built. Q1 text: "I only tell the truth." `OFF_RULES_06b` is a spare. |

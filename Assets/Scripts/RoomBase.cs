@@ -19,6 +19,13 @@ public abstract class RoomBase : MonoBehaviour
         yield break;
     }
 
+    // Pick her reaction to his answer. "normal" is the one from the CSV, or null for silence.
+    // A room with special rules replaces this.
+    public virtual string PickReaction(QuestionData question, int choice, string normal)
+    {
+        return normal;
+    }
+
     // Take the old question away before the next one. A room that needs this replaces it.
     public virtual IEnumerator Transition(QuestionData question)
     {

@@ -29,6 +29,17 @@ public static class ChoiceLog
         records.Add(record);
     }
 
+    // His saved answer to one question, or null if he hasn't answered it
+    public static ChoiceRecord Find(string questionId)
+    {
+        foreach (ChoiceRecord record in records)
+        {
+            if (record.questionId == questionId)
+                return record;
+        }
+        return null;
+    }
+
     // Count the tags of one room and keep the summary
     public static RoomSummary FinishRoom(string room)
     {
