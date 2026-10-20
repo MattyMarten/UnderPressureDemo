@@ -27,6 +27,10 @@ public class JohnnyBreathing : MonoBehaviour
     public int Level { get; private set; } = Silent;
     int wantedLevel = Silent;
 
+    // How many times the script has set his breathing, even to the same state.
+    // BreathFalling compares it before and after a question to see if the question was quiet.
+    public int SetCount { get; private set; }
+
     // True when the breathing must fade out and start again:
     // a new state, or the same state starting with a chosen clip
     bool switchWaiting;
@@ -72,15 +76,17 @@ public class JohnnyBreathing : MonoBehaviour
     // so the caller knows when to show a caption.
     public bool SetLevel(int level, string firstClip)
     {
-        bool sameLevel = (level == wantedLevel);
-        if (sameLevel && firstClip == "")
-            return false;   // already in this state, nothing to do
-
         if (level != Silent && !clipsByLevel.ContainsKey(level))
         {
             Debug.LogWarning("JohnnyBreathing: no clips for state " + level + ". Add one named " + Prefix + level + "_01.");
             return false;
         }
+
+        SetCount++;   // counts even when the state stays the same: something still happened
+
+        bool sameLevel = (level == wantedLevel);
+        if (sameLevel && firstClip == "")
+            return false;   // already in this state, nothing to do
 
         wantedLevel = level;
         firstClipName = firstClip;

@@ -8,6 +8,7 @@ public class QuestionFlow : MonoBehaviour
     public TextAsset questionFile;
     public RoomBase room;
     public VoicePlayer voicePlayer;
+    public BreathFalling breathFalling;   // can stay empty: then his breathing never falls
 
     // Clip ids from VoiceLines.csv, played before the first and after the last question
     public List<string> introLines = new List<string>();
@@ -26,6 +27,9 @@ public class QuestionFlow : MonoBehaviour
 
         foreach (QuestionData question in questions)
         {
+            if (breathFalling != null)
+                breathFalling.StartQuestion();
+
             yield return voicePlayer.PlayAll(question.before);
             yield return voicePlayer.PlayAll(question.voice);
 
@@ -47,6 +51,9 @@ public class QuestionFlow : MonoBehaviour
                 yield return voicePlayer.Play(reaction);
 
             yield return room.Transition(question);
+
+            if (breathFalling != null)
+                yield return breathFalling.EndQuestion();
         }
 
         yield return voicePlayer.PlayAll(endLines);

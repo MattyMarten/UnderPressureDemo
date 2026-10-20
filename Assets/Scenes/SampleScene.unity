@@ -1088,6 +1088,7 @@ GameObject:
   - component: {fileID: 1023874553}
   - component: {fileID: 1023874552}
   - component: {fileID: 1023874551}
+  - component: {fileID: 1023874554}
   m_Layer: 0
   m_Name: Office
   m_TagString: Untagged
@@ -1122,6 +1123,7 @@ MonoBehaviour:
   questionFile: {fileID: 4900000, guid: e322ab3bc5d74fb45aba140b9e6e97eb, type: 3}
   room: {fileID: 1023874551}
   voicePlayer: {fileID: 1521267118}
+  breathFalling: {fileID: 1023874554}
   introLines:
   - JOH_MUM_WAKE
   - wait:2
@@ -1157,6 +1159,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1023874554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023874550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4473fe75baca2a145ba8aacacfd00f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BreathFalling
+  breathing: {fileID: 350862841}
+  voicePlayer: {fileID: 1521267118}
+  rules:
+  - from: 2
+    to: 1
+    afterQuestions: 1
+  - from: 1
+    to: 0
+    afterQuestions: 2
 --- !u!1 &1521267117
 GameObject:
   m_ObjectHideFlags: 0
