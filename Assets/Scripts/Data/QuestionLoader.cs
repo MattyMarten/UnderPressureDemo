@@ -17,7 +17,8 @@ public static class QuestionLoader
     const int Before = 13;
     const int Voice = 14;
     const int React = 15;
-    const int ColumnCount = 16;
+    const int Breath = 16;   // Johnny's breathing after the answer
+    const int ColumnCount = 17;
 
     public static List<QuestionData> Load(TextAsset file)
     {
@@ -112,41 +113,61 @@ public static class QuestionLoader
         if (q.voice.Length == 0)
             Debug.LogWarning(where + ": no voice clip yet.");
 
-        ReadReactions(q, row[React], where);
+        q.react = ReadAnswerList(row[React], q.options.Count, where, "react", "A:OFF_REACT_02");
+        q.breath = ReadAnswerList(row[Breath], q.options.Count, where, "breath", "A:2");
+        CheckBreathStates(q, where);
         return q;
     }
 
-    // Reads a cell like "A:OFF_REACT_08|B:OFF_REACT_02|none:OFF_REACT_DECALL_1"
-    static void ReadReactions(QuestionData q, string cell, string where)
+    // Reads a cell where each answer gets a value, like the react and breath columns:
+    // "A:OFF_REACT_08|B:OFF_REACT_02|none:OFF_REACT_DECALL_1" or "A:2|any:1".
+    // column and example are only for the warnings.
+    static Dictionary<string, string> ReadAnswerList(string cell, int optionCount, string where, string column, string example)
     {
+        var result = new Dictionary<string, string>();
+
         foreach (string entry in SplitList(cell))
         {
             int colon = entry.IndexOf(':');
             if (colon < 0)
             {
-                Debug.LogWarning(where + ": the reaction \"" + entry + "\" has no \":\". Write it like A:OFF_REACT_02.");
+                Debug.LogWarning(where + ", " + column + ": \"" + entry + "\" has no \":\". Write it like " + example + ".");
                 continue;
             }
 
             string key = entry.Substring(0, colon).Trim();
-            string clip = entry.Substring(colon + 1).Trim();
+            string value = entry.Substring(colon + 1).Trim();
 
-            if (!IsReactionKey(key, q.options.Count))
+            if (!IsAnswerKey(key, optionCount))
             {
-                Debug.LogWarning(where + ": unknown reaction key \"" + key + "\". Use A to D (only as many as the options), none or any.");
+                Debug.LogWarning(where + ", " + column + ": unknown key \"" + key + "\". Use A to D (only as many as the options), none or any.");
                 continue;
             }
-            if (q.react.ContainsKey(key))
+            if (result.ContainsKey(key))
             {
-                Debug.LogWarning(where + ": the reaction key \"" + key + "\" is used twice.");
+                Debug.LogWarning(where + ", " + column + ": the key \"" + key + "\" is used twice.");
                 continue;
             }
-            q.react.Add(key, clip);
+            result.Add(key, value);
+        }
+
+        return result;
+    }
+
+    // Warns now, when the file loads, about a breath value that can't work: "2", "5_03" and "-1" are fine
+    static void CheckBreathStates(QuestionData q, string where)
+    {
+        foreach (KeyValuePair<string, string> pair in q.breath)
+        {
+            string state = pair.Value.Split('_')[0];   // "5_03" → "5"
+            int level;
+            if (!int.TryParse(state, out level) || level < -1)
+                Debug.LogWarning(where + ", breath: \"" + pair.Value + "\" is not a breathing state. Write it like A:2 or A:5_03.");
         }
     }
 
     // A, B, C, D (only as many as the question has options), none or any
-    static bool IsReactionKey(string key, int optionCount)
+    static bool IsAnswerKey(string key, int optionCount)
     {
         if (key == "none" || key == "any")
             return true;

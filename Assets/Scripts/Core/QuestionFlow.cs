@@ -37,7 +37,12 @@ public class QuestionFlow : MonoBehaviour
 
             yield return room.ShowResult(question, choice);
 
-            string reaction = room.PickReaction(question, choice, Reaction(question, choice));
+            // His breathing changes first, so he already breathes that way while she reacts
+            string breath = ForAnswer(question.breath, choice);
+            if (breath != null)
+                yield return voicePlayer.Play("breath:" + breath);
+
+            string reaction = room.PickReaction(question, choice, ForAnswer(question.react, choice));
             if (reaction != null)
                 yield return voicePlayer.Play(reaction);
 
@@ -50,14 +55,15 @@ public class QuestionFlow : MonoBehaviour
         Debug.Log("Room finished. " + summary.Describe());
     }
     
-    // Her reaction to this answer: the one for this exact answer, else the "any" one, else silence (null)
-    static string Reaction(QuestionData question, int choice)
+    // The value for this answer from a react or breath list:
+    // the one for this exact answer, else the "any" one, else null (nothing)
+    static string ForAnswer(Dictionary<string, string> list, int choice)
     {
         string key = ChoiceName(choice);
-        if (question.react.ContainsKey(key))
-            return question.react[key];
-        if (question.react.ContainsKey("any"))
-            return question.react["any"];
+        if (list.ContainsKey(key))
+            return list[key];
+        if (list.ContainsKey("any"))
+            return list["any"];
         return null;
     }
 

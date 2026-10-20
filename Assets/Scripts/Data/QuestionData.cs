@@ -33,4 +33,7 @@ public class QuestionData
 
     // Her reaction after the answer: "A", "B", "C", "D", "none" or "any" → clip id
     public Dictionary<string, string> react = new Dictionary<string, string>();
+
+    // Johnny's breathing after the answer: "A", "B", "C", "D", "none" or "any" → state, like "2" or "5_03"
+    public Dictionary<string, string> breath = new Dictionary<string, string>();
 }

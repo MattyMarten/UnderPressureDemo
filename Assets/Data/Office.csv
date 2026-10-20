@@ -1,16 +1,16 @@
-id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,tagsNone,before,voice,react
-office_01,1,single,I only tell the truth.,,,,,,,,,,,OFF_RULES_02|OFF_RULES_03a,any:OFF_RULES_04
-office_02,2,single,Stealing should always be punished.,,,,,,,,,,OFF_RULES_05,OFF_Q02,any:OFF_REACT_02
-office_03,3,single,I agree to take part in this test.,,,,,,,,,,OFF_RULES_07a,OFF_Q03,A:OFF_REACT_Q03_ACC|B:OFF_REACT_Q03_DEC
-office_04,4,pair,"Coffee, or tea?",Coffee.,Tea.,,,,,,,,,OFF_Q04|OFF_RULES_06,
-office_05,5,pair,"Lie, or tell the truth?",Lie to a friend to spare their feelings.,Tell them the truth and hurt them.,,,,,,,,,OFF_Q05,A:OFF_REACT_Q05_LIE
-office_06,6,pair,Which would you choose to lose?,Your right hand.,Your left leg.,,,,,,,,,OFF_Q06,any:OFF_REACT_02
-office_07,7,single,I work well under pressure.,,,,,,,,,,,OFF_Q07,
-office_08,8,pick,Which would you give up?,Your sight.,Your hearing.,Your voice.,,,,,,,,OFF_Q08,A:OFF_REACT_05|B:OFF_REACT_05|C:OFF_REACT_Q08_VOICE
-office_09,9,pick,One dose of medicine is left. Who gets it?,A child.,A doctor who can save many.,Your brother.,,,useful,family,,,,OFF_Q09,any:OFF_REACT_02
-office_10,10,pick,One seat on a lifeboat.,An old man.,A pregnant woman.,You.,,,more lives,self,,,,OFF_Q10,C:OFF_REACT_07
-office_11,11,single,Some people deserve to die.,,,,,,,,,,,OFF_Q11,A:OFF_REACT_08|B:OFF_REACT_02
-office_12,12,pick,"Under pressure, what do you do?",I stay calm.,I freeze.,I panic.,I don't know yet.,,,,,,,OFF_Q12,D:OFF_REACT_Q12_DK
-office_13,13,pick,Keep one alive.,A murderer.,A liar.,A thief.,A coward.,,,,,clever,,OFF_Q13,none:OFF_REACT_DECALL_1
-office_14,14,pick,Choose one to die.,Your mother.,Your father.,Your brother.,A stranger.,,,,family,clever|more lives,,OFF_Q14,A:OFF_REACT_02|B:OFF_REACT_02|C:OFF_REACT_02|none:OFF_REACT_DECALL_1
-office_15,15,single,I would give a finger to save a stranger.,,,,,,,,,,,OFF_Q15,any:OFF_REACT_Q15
+id,order,type,text,optionA,optionB,optionC,optionD,tagsA,tagsB,tagsC,tagsD,tagsNone,before,voice,react,breath
+office_01,1,single,I only tell the truth.,,,,,,,,,,,OFF_RULES_02|OFF_RULES_03a,any:OFF_RULES_04,
+office_02,2,single,Stealing should always be punished.,,,,,,,,,,OFF_RULES_05,OFF_Q02,any:OFF_REACT_02,
+office_03,3,single,I agree to take part in this test.,,,,,,,,,,OFF_RULES_07a,OFF_Q03,A:OFF_REACT_Q03_ACC|B:OFF_REACT_Q03_DEC,
+office_04,4,pair,"Coffee, or tea?",Coffee.,Tea.,,,,,,,,,OFF_Q04|OFF_RULES_06,,
+office_05,5,pair,"Lie, or tell the truth?",Lie to a friend to spare their feelings.,Tell them the truth and hurt them.,,,,,,,,,OFF_Q05,A:OFF_REACT_Q05_LIE,
+office_06,6,pair,Which would you choose to lose?,Your right hand.,Your left leg.,,,,,,,,,OFF_Q06,any:OFF_REACT_02,
+office_07,7,single,I work well under pressure.,,,,,,,,,,,OFF_Q07,,
+office_08,8,pick,Which would you give up?,Your sight.,Your hearing.,Your voice.,,,,,,,,OFF_Q08,A:OFF_REACT_05|B:OFF_REACT_05|C:OFF_REACT_Q08_VOICE,
+office_09,9,pick,One dose of medicine is left. Who gets it?,A child.,A doctor who can save many.,Your brother.,,,useful,family,,,,OFF_Q09,any:OFF_REACT_02,
+office_10,10,pick,One seat on a lifeboat.,An old man.,A pregnant woman.,You.,,,more lives,self,,,,OFF_Q10,C:OFF_REACT_07,
+office_11,11,single,Some people deserve to die.,,,,,,,,,,,OFF_Q11,A:OFF_REACT_08|B:OFF_REACT_02,
+office_12,12,pick,"Under pressure, what do you do?",I stay calm.,I freeze.,I panic.,I don't know yet.,,,,,,,OFF_Q12,D:OFF_REACT_Q12_DK,
+office_13,13,pick,Keep one alive.,A murderer.,A liar.,A thief.,A coward.,,,,,clever,,OFF_Q13,none:OFF_REACT_DECALL_1,
+office_14,14,pick,Choose one to die.,Your mother.,Your father.,Your brother.,A stranger.,,,,family,clever|more lives,,OFF_Q14,A:OFF_REACT_02|B:OFF_REACT_02|C:OFF_REACT_02|none:OFF_REACT_DECALL_1,
+office_15,15,single,I would give a finger to save a stranger.,,,,,,,,,,,OFF_Q15,any:OFF_REACT_Q15,
