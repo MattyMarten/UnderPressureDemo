@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 1 — Johnny's breathing works: states set from clip lists (`breath:2`), random variants, one-time sounds. Scripts sorted into folders.
-- **Next step:** the `breath` column in the question CSV (answer-based breathing), then falling (after quiet questions, go to a set state).
+- **Where we are:** Stage 1 — Johnny's breathing done: states, variants, one-time sounds, the `breath` column and falling.
+- **Next step:** the office in grey boxes: desk, papers, stamps and stamping.
 
 ---
 
@@ -50,7 +50,6 @@ The demo is one run of four rooms, 40 questions, about 10 to 15 minutes. No mone
 Every room follows the same rhythm: **question → choice → result → transition → next question.** These systems are built once and used by every room.
 
 - [x] Question flow, with a transition step each room fills in its own way
-- [ ] Timer (not in the office): starts after she finishes speaking, 20 down to 10 seconds per part
 - [x] Questions loaded from CSV files
 - [x] Choice log: every decision recorded as an event, with the question's tags
 - [x] Voice line player with subtitles
@@ -63,12 +62,12 @@ Every room follows the same rhythm: **question → choice → result → transit
   - [x] Her special reactions as code in `OfficeRoom`: the Q12 contradiction and the second decline-all
 - [x] Johnny on his own audio channel: his mumbles and breathing play at the same time as her voice, not after it
 - [x] Johnny's captions: a second subtitle text just above hers, smaller and grey or italic, in square brackets ("[muffled protest]"). Breathing gets a caption only when it changes
-- [ ] Johnny's breathing: stress levels set by the script (see "How Johnny's breathing works" below)
+- [x] Johnny's breathing: stress levels set by the script (see "How Johnny's breathing works" below)
   - [x] `JohnnyBreathing`: own AudioSource, loops random variants of one state, quick fade on change, pauses while he makes a one-time sound
   - [x] `breath:2`, `breath:5_03` (start with that clip) and `breath:-1` (silent) in any clip list
   - [x] One-time sounds: `JOH_CRY` plays a random `JOH_CRY_..`, `JOH_CRY_02` that exact clip
-  - [ ] `breath` column in the question CSV: `A:2|any:1`
-  - [ ] Falling: after quiet questions, go to a set state
+  - [x] `breath` column in the question CSV: `A:2|any:1`
+  - [x] Falling: `BreathFalling` rules per room (from, to, after quiet questions). A state with no rule never falls
 - [ ] Tune the intro: pause lengths between her lines, how much Johnny mumbles
 - [x] Office voice script written ("Demo voice lines: Office and ride")
 - [x] Office voice lines: AI placeholders
@@ -79,7 +78,7 @@ Every room follows the same rhythm: **question → choice → result → transit
 
 ### How Johnny's breathing works
 
-Agreed 2026-10-18, changed 2026-10-20. Set rules and variants built; the CSV column and falling not yet.
+Agreed 2026-10-18, changed 2026-10-20. All built.
 
 - **A stress level** picks which breathing plays. It follows the script, not the player's state: every question and answer says where it goes, so we check that the breathing sounds right whatever he answers.
 - **States, by number:** -1 silent, 0 idle, 1 bit stressed (like idle, a bit louder and faster), 2 fast breathing, 3 stressed (with a little mumble), 4 scared (uneven breathing), 5 pain (crying and mumbling), 6 really painful (mumbled curses and crying). Numbers only, no names in the code; the list is also a comment at the top of `JohnnyBreathing.cs`. The office uses -1, 0, 1 and 2.
@@ -103,6 +102,7 @@ Agreed 2026-10-18, changed 2026-10-20. Set rules and variants built; the CSV col
 
 ## Stage 2 — The game show
 
+- [ ] Timer: starts after she finishes speaking, 20 down to 10 seconds per part (moved from Stage 1: the office has no timer)
 - [ ] Foot button
 - [ ] First one or three questions free (to decide), then one finger per press
 - [ ] Fingers taken from one hand first, then the other (at most seven, or nine with one free press)
@@ -220,6 +220,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-20 | Breathing finished. `breath` column added to the question CSV (`A:2|any:1|none:2`), applied right after his answer, before her reaction; `QuestionLoader.ReadAnswerList` reads both `react` and `breath`. `BreathFalling` on the QuestionFlow object: rules per room (office: 2 → 1 after 1 quiet question, 1 → 0 after 2); a quiet question has no `breath:` anywhere, and setting the same state again resets the count. Timer moved to Stage 2. |
 | 2026-10-20 | Johnny's breathing built. New `JohnnyBreathing` (own AudioSource) and `ClipVariants` (random variant, never twice in a row). States -1 to 6 by number; clips named `JOH_BREATH_<state>_<number>`. `breath:2`, `breath:5_03` and `breath:-1` work in any clip list; the caption shows only when the state changes, from rows `JOH_BREATH_0`, `_1`, `_2` in `VoiceLines.csv`. Johnny's one-time sounds: `JOH_CRY` picks a random variant, `JOH_CRY_02` an exact one, caption from the group row; his breathing pauses while they play. Intro uses `breath:2` after the mouth line and `breath:0` before "Let's begin." Falling changed to "go to a set state". Old `JOH_BREATH_FAST`/`SLOW` moved to Spare. Scripts sorted into Core, Data, Audio, Rooms and Testing. |
 | 2026-10-18 | Johnny's own channel and captions built. `JohnnyVoice` has its own AudioSource and caption text; `VoicePlayer` sends every line whose speaker is `Johnny` there and doesn't wait for it, so she talks over him. `wait:1.5` in any clip list (intro, end, CSV columns) is a pause; the intro starts with `JOH_MUM_WAKE`, `wait:3`. Captions come from `VoiceLines.csv` without brackets, the code adds them; an empty cell means no caption. His caption stays for his whole clip, independent of her subtitle. Subtitle and caption rebuilt as UI TextMeshPro (not the 3D kind); Canvas Scaler match 0.5. Mumble captions are placeholders. |
 | 2026-10-18 | Her special reactions built. `RoomBase` has a new `PickReaction` a room can replace; `OfficeRoom` uses it. Q12 contradiction ("You said you work well under pressure.") plays only if he accepted Q7 and picks B (freeze) or C (panic) on Q12. Decline-all: silence on questions with no `none` reaction, then "None of them. I see.", then "None again." `ChoiceLog.Find` looks up an earlier answer. `KeyboardTestRoom` now builds on `OfficeRoom` for testing. Reactions stay fixed: one clip per answer, never random. Q12 keeps "I panic." Input Actions come later, with the real stamping. Claude sends changed scripts as files; I copy them in myself. |
