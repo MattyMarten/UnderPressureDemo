@@ -37,8 +37,8 @@ public class KeyboardTestRoom : OfficeRoom
     public override IEnumerator Transition(QuestionData question)
     {
         Debug.Log("Stamped!");
-        Debug.Log("(the paper goes away)");
         yield return new WaitForSeconds(0.5f);
+        yield return base.Transition(question);   // OfficeRoom takes the papers away
     }
 
     // Returns the number key pressed this frame, or -1 if none

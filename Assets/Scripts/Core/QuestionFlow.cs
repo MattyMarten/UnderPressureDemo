@@ -31,6 +31,7 @@ public class QuestionFlow : MonoBehaviour
                 breathFalling.StartQuestion();
 
             yield return voicePlayer.PlayAll(question.before);
+            room.ShowQuestion(question);   // the papers are there while she reads them
             yield return voicePlayer.PlayAll(question.voice);
 
             yield return room.AskQuestion(question);

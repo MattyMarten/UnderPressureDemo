@@ -10,7 +10,13 @@ public abstract class RoomBase : MonoBehaviour
     // Set by AskQuestion: 0 = A, 1 = B, 2 = C, 3 = D, or NoChoice
     public int ChosenOption { get; protected set; }
 
-    // Show the question and wait until he has answered. Every room must have this.
+    // Put the question in the room (papers on the desk...) before she reads it.
+    // A room that needs this replaces it.
+    public virtual void ShowQuestion(QuestionData question)
+    {
+    }
+
+    // Wait until he has answered. Every room must have this.
     public abstract IEnumerator AskQuestion(QuestionData question);
 
     // Show what his choice caused. A room that needs this replaces it.
