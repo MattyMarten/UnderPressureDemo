@@ -1130,12 +1130,12 @@ MonoBehaviour:
   - JOH_MUM_PROTEST
   - wait:1
   - OFF_INTRO_MOUTH
-  - JOH_BREATH_FAST
+  - breath:2
   - OFF_INTRO_03b
   - OFF_INTRO_02b
   - OFF_INTRO_04a
   - OFF_INTRO_05a
-  - JOH_BREATH_SLOW
+  - breath:0
   - OFF_RULES_01a
   endLines:
   - OFF_END_01a

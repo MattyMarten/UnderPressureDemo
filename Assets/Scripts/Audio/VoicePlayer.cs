@@ -7,7 +7,8 @@ using UnityEngine;
 // Plays one voice clip and shows its subtitle while it plays.
 // Rooms wait for it with: yield return voicePlayer.Play("OFF_Q04");
 // Johnny's lines go to JohnnyVoice and don't wait. "wait:1.5" is a pause of 1.5 seconds.
-// "breath:1" sets Johnny's breathing to level 1 and doesn't wait.
+// "breath:1" sets Johnny's breathing to state 1 and doesn't wait.
+// "breath:5_03" goes to state 5 and starts with JOH_BREATH_5_03. "breath:-1" is silence.
 public class VoicePlayer : MonoBehaviour
 {
     public TextAsset voiceLinesFile;     // VoiceLines.csv
@@ -62,19 +63,26 @@ public class VoicePlayer : MonoBehaviour
             yield break;
         }
 
-        // His breathing level: "breath:1". Its caption is the line JOH_BREATH_1 in VoiceLines.csv
+        // His breathing state: "breath:1", "breath:5_03" or "breath:-1".
+        // Its caption is the line JOH_BREATH_1 in VoiceLines.csv. Silent has no caption.
         if (id.StartsWith("breath:"))
         {
             int level;
-            if (BreathLevel(id, out level))
-                johnnyVoice.SetBreathing(level, Subtitle("JOH_BREATH_" + level));
+            string firstClip;
+            if (ReadBreath(id, out level, out firstClip))
+            {
+                string caption = "";
+                if (level != JohnnyBreathing.Silent)
+                    caption = Subtitle("JOH_BREATH_" + level);
+                johnnyVoice.SetBreathing(level, firstClip, caption);
+            }
             yield break;
         }
 
-        // His lines play on his own channel, and we don't wait for them
+        // His sounds play on his own channel, and we don't wait for them
         if (IsJohnny(id))
         {
-            johnnyVoice.Play(id, Subtitle(id));
+            johnnyVoice.Play(id, Subtitle(LineId(id)));
             yield break;
         }
 
@@ -107,21 +115,45 @@ public class VoicePlayer : MonoBehaviour
         }
     }
 
-    // "breath:1" → 1. Returns false (and warns) if there is no number after "breath:"
-    bool BreathLevel(string id, out int level)
+    // "breath:1"    → state 1, firstClip ""
+    // "breath:5_03" → state 5, firstClip "JOH_BREATH_5_03"
+    // "breath:-1"   → silent
+    // Returns false (and warns) if it can't read it.
+    bool ReadBreath(string id, out int level, out string firstClip)
     {
-        string number = id.Substring("breath:".Length).Trim();
-        if (int.TryParse(number, out level) && level >= 0)
-            return true;
+        string value = id.Substring("breath:".Length).Trim();   // "5_03"
+        string[] parts = value.Split('_');                       // ["5", "03"]
+        firstClip = "";
 
-        Debug.LogWarning("VoicePlayer: \"" + id + "\" is not a breathing level. Write it like breath:1");
-        return false;
+        bool ok = int.TryParse(parts[0], out level)
+               && level >= JohnnyBreathing.Silent
+               && parts.Length <= 2;
+
+        if (!ok)
+        {
+            Debug.LogWarning("VoicePlayer: \"" + id + "\" is not a breathing state. Write it like breath:1 or breath:5_03");
+            return false;
+        }
+
+        if (parts.Length == 2)
+            firstClip = "JOH_BREATH_" + value;
+        return true;
     }
 
-    // True if VoiceLines.csv says this line is Johnny's
+    // The row in VoiceLines.csv for this clip: its own row if it has one,
+    // else the row of its group. "JOH_CRY_02" has no row, so it uses "JOH_CRY".
+    string LineId(string id)
+    {
+        if (lines.ContainsKey(id))
+            return id;
+        return ClipVariants.GroupName(id);
+    }
+
+    // True if VoiceLines.csv says this sound is Johnny's
     bool IsJohnny(string id)
     {
-        return lines.ContainsKey(id) && lines[id].speaker == "Johnny";
+        string row = LineId(id);
+        return lines.ContainsKey(row) && lines[row].speaker == "Johnny";
     }
 
     // "wait:1.5" → 1.5. Always reads a dot as the decimal sign, whatever the computer's language.
