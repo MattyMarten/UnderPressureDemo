@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 1 — Johnny's breathing done: states, variants, one-time sounds, the `breath` column and falling.
-- **Next step:** the office in grey boxes: desk, papers, stamps and stamping.
+- **Where we are:** Stage 1 — the office in grey boxes: room, desk, stamps and camera built; papers appear on the desk for each question (answered with number keys for now). Controls agreed (see "Controls").
+- **Next step:** Step 3 of the office: the fixed state (the mouse moves the stamp in a desk area, the camera follows softly) and hold Shift to look around. Then picking up a stamp, stamping, and papers moving away.
 
 ---
 
@@ -69,6 +69,7 @@ Every room follows the same rhythm: **question → choice → result → transit
   - [x] `breath` column in the question CSV: `A:2|any:1`
   - [x] Falling: `BreathFalling` rules per room (from, to, after quiet questions). A state with no rule never falls
 - [ ] Tune the intro: pause lengths between her lines, how much Johnny mumbles
+- [ ] Wake-up animation: he looks around in panic (seated, mumbling), looks at the radio while she talks, and on "Let's begin." looks at his right hand, which gets freed. The fixed state starts there. Idea to compare: `look:Radio` entries in the clip lists, or a Timeline
 - [x] Office voice script written ("Demo voice lines: Office and ride")
 - [x] Office voice lines: AI placeholders
 - [X] Johnny's sounds (mumbles, breathing), recorded by me -PAIN for game show still to do
@@ -89,13 +90,30 @@ Agreed 2026-10-18, changed 2026-10-20. All built.
 - **Variants:** each state can have several breathing clips. One is picked at random, never the same twice in a row. File names: `JOH_BREATH_<state>_<number>`, two-digit numbers (`JOH_BREATH_2_01`), so new variants are just new files. His other sounds work the same way (`JOH_CRY_01`, `JOH_LAUGH_01`…), with one caption row per group in `VoiceLines.csv` (`JOH_CRY`). Her lines are never random.
 - **Switching levels:** start with a quick fade. Later, try transition breaths (from pain: one deep breath, then the lower level; from panic: two breaths in…).
 
+### Controls
+
+Agreed 2026-10-20. The same in every room: the player learns them once in the office.
+
+- **Fixed state** is the main state. The camera looks at the room's main view. In the office the mouse moves his right hand (for now only the stamp) inside an area of the desk, and the camera follows it softly.
+- **Hold Shift** to look around, seated (he stays in his chair the whole game). The hand stays where it is. Letting go of Shift unzooms and turns the camera smoothly back to the main view.
+- **Middle mouse button** zooms in, for reading.
+- **Office:** hold the left mouse button on a stamp to pick it up, the right mouse button stamps, letting go sends the stamp back to its spot. No aiming dot; the hand is the pointer.
+- **Hands:** his right hand gets freed at the end of the intro. His left hand stays in view, and he sees his body when he looks down. Grey-box hands are skipped; real hands come with the art.
+- Later rooms (foot button, hold buttons) use the fixed state, Shift and zoom, without the hand.
+
 ### The office (grey boxes)
 
-- [ ] Desk, papers, green and red stamps
-- [ ] One-paper questions (accept or decline)
-- [ ] Questions with 2 to 4 papers, one option on each (only one can be accepted)
-- [ ] Stamping: green once per question, red as often as needed; the question is done when every paper has a stamp
-- [ ] Papers go away, next question appears
+- [x] Grey-box room (`OfficeSet`): floor, walls, desk, chair, green and red stamps, camera at his eyes. Materials in `Art/Materials`
+- [x] `Paper` prefab (sheet + 3D TextMeshPro) with the `Paper` script
+- [x] Papers on the desk: `OfficeRoom.ShowQuestion` lays 1 to 4 papers in a row on `PaperCenter` (0.24 m apart), after her `before` lines and before her question line. A single paper shows the statement, the others one option each
+- [ ] Fixed state: the mouse moves the stamp (later his right hand) in a desk area; the camera follows it softly
+- [ ] Hold Shift to look around (`SeatedLook`); letting go unzooms and turns the camera back to the main view
+- [ ] Zoom with the middle mouse button
+- [ ] Picking up a stamp: hold the left mouse button; letting go sends it back to its own spot
+- [ ] Stamping with the right mouse button: green once per question, red as often as needed, a stamp can't be changed; the question is done when every paper has a stamp
+- [ ] One-paper questions (accept or decline) and 2 to 4 papers (only one can be accepted), answered by stamps instead of number keys
+- [ ] Papers move away, next question appears (now they just disappear)
+- [ ] The radio her voice comes from (maybe 3D sound)
 - [ ] Johnny's mouth sewn shut: mumbles and breathing only
 - [x] 15 questions in CSV
 - [ ] Ending line: "Great, now let's start the main test."
@@ -208,6 +226,10 @@ Order to be decided (see "To decide").
 
 - [ ] **Tower with missing fingers (demo).** If the game show took five fingers from one hand, can that hand still hold a rope?
 - [ ] **Free presses (demo).** One or three free presses at the game show?
+- [ ] **Zoom in the fixed state.** Middle mouse zooms while holding Shift; can he also zoom without Shift?
+- [ ] **Paper timing.** Papers appear before her question line. Check that it feels right in play (moving it is one line in `QuestionFlow`).
+- [ ] **Ending line.** "Great, now let's start the main test." already plays in `endLines`. Tick the office item?
+- [ ] **Game idea document.** Add the radio, the freed right hand and the controls to it.
 - [ ] **Office answer times (demo).** Do they count for a modifier? What does declining every paper make him?
 - [ ] **Demo design points.** See "Still to decide for the demo" in the game idea document.
 - [ ] **Bell Tower grab window (full game).** Does the 10-second rope grab happen before her line, or during it?
@@ -220,6 +242,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-20 | Office grey boxes started. `OfficeSet` with desk, chair, walls, stamps and the camera at his eyes (0, 1.2, 0, tilted 40° down). `SeatedLook` turns the camera with the mouse (Input Actions `Player/Look`), with limits; Max Up 70 because "straight ahead" is 40° down. `Paper` prefab and script; `RoomBase.ShowQuestion` (new, called between `before` and `voice`) lets `OfficeRoom` lay 1 to 4 papers on `PaperCenter`. `OfficeRoom.AskQuestion` waits until stamping is built; `KeyboardTestRoom` still answers with number keys and calls `base.Transition` to remove the papers. Controls agreed (fixed state, Shift to look, middle mouse to zoom). New ideas: the radio, the freed right hand, the wake-up animation. |
 | 2026-10-20 | Breathing finished. `breath` column added to the question CSV (`A:2|any:1|none:2`), applied right after his answer, before her reaction; `QuestionLoader.ReadAnswerList` reads both `react` and `breath`. `BreathFalling` on the QuestionFlow object: rules per room (office: 2 → 1 after 1 quiet question, 1 → 0 after 2); a quiet question has no `breath:` anywhere, and setting the same state again resets the count. Timer moved to Stage 2. |
 | 2026-10-20 | Johnny's breathing built. New `JohnnyBreathing` (own AudioSource) and `ClipVariants` (random variant, never twice in a row). States -1 to 6 by number; clips named `JOH_BREATH_<state>_<number>`. `breath:2`, `breath:5_03` and `breath:-1` work in any clip list; the caption shows only when the state changes, from rows `JOH_BREATH_0`, `_1`, `_2` in `VoiceLines.csv`. Johnny's one-time sounds: `JOH_CRY` picks a random variant, `JOH_CRY_02` an exact one, caption from the group row; his breathing pauses while they play. Intro uses `breath:2` after the mouth line and `breath:0` before "Let's begin." Falling changed to "go to a set state". Old `JOH_BREATH_FAST`/`SLOW` moved to Spare. Scripts sorted into Core, Data, Audio, Rooms and Testing. |
 | 2026-10-18 | Johnny's own channel and captions built. `JohnnyVoice` has its own AudioSource and caption text; `VoicePlayer` sends every line whose speaker is `Johnny` there and doesn't wait for it, so she talks over him. `wait:1.5` in any clip list (intro, end, CSV columns) is a pause; the intro starts with `JOH_MUM_WAKE`, `wait:3`. Captions come from `VoiceLines.csv` without brackets, the code adds them; an empty cell means no caption. His caption stays for his whole clip, independent of her subtitle. Subtitle and caption rebuilt as UI TextMeshPro (not the 3D kind); Canvas Scaler match 0.5. Mumble captions are placeholders. |
