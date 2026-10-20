@@ -7,6 +7,7 @@ using UnityEngine;
 // Plays one voice clip and shows its subtitle while it plays.
 // Rooms wait for it with: yield return voicePlayer.Play("OFF_Q04");
 // Johnny's lines go to JohnnyVoice and don't wait. "wait:1.5" is a pause of 1.5 seconds.
+// "breath:1" sets Johnny's breathing to level 1 and doesn't wait.
 public class VoicePlayer : MonoBehaviour
 {
     public TextAsset voiceLinesFile;     // VoiceLines.csv
@@ -61,6 +62,15 @@ public class VoicePlayer : MonoBehaviour
             yield break;
         }
 
+        // His breathing level: "breath:1". Its caption is the line JOH_BREATH_1 in VoiceLines.csv
+        if (id.StartsWith("breath:"))
+        {
+            int level;
+            if (BreathLevel(id, out level))
+                johnnyVoice.SetBreathing(level, Subtitle("JOH_BREATH_" + level));
+            yield break;
+        }
+
         // His lines play on his own channel, and we don't wait for them
         if (IsJohnny(id))
         {
@@ -91,10 +101,21 @@ public class VoicePlayer : MonoBehaviour
         {
             yield return Play(id);
 
-            // No gap after a pause or one of his sounds, so they add no extra time
-            if (!id.StartsWith("wait:") && !IsJohnny(id))
+            // No gap after a pause, a breathing change or one of his sounds, so they add no extra time
+            if (!id.StartsWith("wait:") && !id.StartsWith("breath:") && !IsJohnny(id))
                 yield return new WaitForSeconds(gapBetweenLines);
         }
+    }
+
+    // "breath:1" → 1. Returns false (and warns) if there is no number after "breath:"
+    bool BreathLevel(string id, out int level)
+    {
+        string number = id.Substring("breath:".Length).Trim();
+        if (int.TryParse(number, out level) && level >= 0)
+            return true;
+
+        Debug.LogWarning("VoicePlayer: \"" + id + "\" is not a breathing level. Write it like breath:1");
+        return false;
     }
 
     // True if VoiceLines.csv says this line is Johnny's

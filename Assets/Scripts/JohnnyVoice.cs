@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-// Johnny's own sound channel: his mumbles, and later his breathing.
+// Johnny's own sound channel: his mumbles, and his breathing (through JohnnyBreathing).
 // His clips start and return at once, so her voice can play over them.
 // His caption shows above her subtitle while his clip plays.
 public class JohnnyVoice : MonoBehaviour
 {
     public AudioSource audioSource;
     public TMP_Text captionText;                 // his caption, above her subtitle
+    public JohnnyBreathing breathing;            // his breathing, on its own channel
     public string clipFolder = "Voice/Johnny";   // inside a Resources folder
+    public float breathCaptionTime = 3f;         // seconds a breathing caption stays
 
     Dictionary<string, AudioClip> clipsByName = new Dictionary<string, AudioClip>();
     Coroutine clearRoutine;                      // the timer that clears his caption
@@ -28,6 +30,7 @@ public class JohnnyVoice : MonoBehaviour
 
     // Starts one of his clips and does not wait for it.
     // If one of his clips is still playing, it is cut off.
+    // His breathing pauses while the clip plays, because you can hear him breathe in the mumble already.
     // An empty caption means no caption.
     public void Play(string id, string caption)
     {
@@ -41,7 +44,23 @@ public class JohnnyVoice : MonoBehaviour
         audioSource.clip = clip;
         audioSource.Play();
 
-        // Stop the timer of the clip we just cut off, so it can't clear the new caption
+        breathing.PauseFor(clip.length);
+        ShowCaption(caption, clip.length);
+    }
+
+    // Changes his breathing level. The caption shows only if the level really changes.
+    public void SetBreathing(int level, string caption)
+    {
+        bool changed = breathing.SetLevel(level);
+        if (changed && caption != "")
+            ShowCaption(caption, breathCaptionTime);
+    }
+
+    // Shows his caption in square brackets for some seconds, then clears it.
+    // An empty caption clears it at once.
+    void ShowCaption(string caption, float seconds)
+    {
+        // Stop the timer of the old caption, so it can't clear the new one
         if (clearRoutine != null)
             StopCoroutine(clearRoutine);
 
@@ -50,10 +69,10 @@ public class JohnnyVoice : MonoBehaviour
         else
             captionText.text = "[" + caption + "]";
 
-        clearRoutine = StartCoroutine(ClearCaptionAfter(clip.length));
+        clearRoutine = StartCoroutine(ClearCaptionAfter(seconds));
     }
 
-    // Waits until his clip has ended, then clears his caption
+    // Waits, then clears his caption
     IEnumerator ClearCaptionAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);

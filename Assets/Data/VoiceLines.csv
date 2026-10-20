@@ -2,8 +2,8 @@ id,speaker,en
 JOH_MUM_WAKE,Johnny,panicked mumbling
 JOH_MUM_PROTEST,Johnny,muffled protest
 JOH_MUM_BEG,Johnny,muffled begging
-JOH_BREATH_FAST,Johnny,
-JOH_BREATH_SLOW,Johnny,
+JOH_BREATH_0,Johnny,breathing slowly
+JOH_BREATH_1,Johnny,breathing fast
 OFF_INTRO_01a,Her,"Hello, Johnny."
 OFF_INTRO_01b,Her,You're awake. Good.
 OFF_INTRO_MOUTH,Her,"I sewed your mouth shut. Here, what you say doesn't matter. What you do does."
