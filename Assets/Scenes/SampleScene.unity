@@ -976,6 +976,7 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
+  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1121,6 +1122,23 @@ MonoBehaviour:
   follow: {fileID: 1067515711}
   followAmount: 0.3
   smoothTime: 0.25
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fcd052cabca8c44ca5cf183048ba118, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraZoom
+  look: {fileID: 330585548}
+  zoomedFieldOfView: 30
+  smoothTime: 0.15
+  zoomWithoutShift: 0
+  canZoom: 1
 --- !u!1 &350862840
 GameObject:
   m_ObjectHideFlags: 0
