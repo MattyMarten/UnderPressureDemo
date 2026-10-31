@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 1 — the office in grey boxes: room, desk, stamps and camera built; papers appear on the desk for each question (answered with number keys for now). Controls agreed (see "Controls").
-- **Next step:** Step 3 of the office: the fixed state (the mouse moves the stamp in a desk area, the camera follows softly) and hold Shift to look around. Then picking up a stamp, stamping, and papers moving away.
+- **Where we are:** Stage 1 — the office in grey boxes. Papers appear on the desk for each question (still answered with number keys). The fixed state works: the mouse moves his grey-box arm over the desk and the camera follows softly; Shift looks around; the left mouse button picks up a stamp; Q and E turn the hand. Controls changed (see "Controls").
+- **Next step:** zoom with the right mouse button. Then stamping with Space, answering by stamps instead of number keys, and papers moving away.
 
 ---
 
@@ -92,25 +92,47 @@ Agreed 2026-10-18, changed 2026-10-20. All built.
 
 ### Controls
 
-Agreed 2026-10-20. The same in every room: the player learns them once in the office.
+Agreed 2026-10-20, changed 2026-10-31. The same in every room: the player learns them once in the office. Left hand on the keys, right hand on the mouse.
 
-- **Fixed state** is the main state. The camera looks at the room's main view. In the office the mouse moves his right hand (for now only the stamp) inside an area of the desk, and the camera follows it softly.
-- **Hold Shift** to look around, seated (he stays in his chair the whole game). The hand stays where it is. Letting go of Shift unzooms and turns the camera smoothly back to the main view.
-- **Middle mouse button** zooms in, for reading.
-- **Office:** hold the left mouse button on a stamp to pick it up, the right mouse button stamps, letting go sends the stamp back to its spot. No aiming dot; the hand is the pointer.
-- **Hands:** his right hand gets freed at the end of the intro. His left hand stays in view, and he sees his body when he looks down. Grey-box hands are skipped; real hands come with the art.
+| Key | What it does |
+|---|---|
+| Mouse movement | Fixed state: moves his wrist over the desk. With Shift: turns his head |
+| Shift (hold) | Look around |
+| Left mouse button (hold) | Hold a stamp; letting go sends it back to its spot |
+| Right mouse button | Zoom (not built yet) |
+| Space | Stamp (not built yet) |
+| Q / E (hold) | Turn the hand left (up to 80°) / right (up to 20°) |
+
+- **Fixed state** is the main state. The camera looks at the room's main view. In the office the mouse moves his wrist inside an area of the desk (`HandArea`), and the camera follows it softly.
+- **Hold Shift** to look around, seated (he stays in his chair the whole game). The hand stays where it is and can't pick up or turn. Letting go of Shift turns the camera smoothly back to the main view (and will unzoom, once zoom is built).
+- **Office:** hold the left mouse button with the hand over a stamp (within 10 cm, seen from above): the stamp glides into the hand and turns to the hand's rotation. Space stamps. Letting go sends the stamp gliding back to its own spot. No aiming dot; the hand is the pointer.
+- **Hands:** his right hand gets freed at the end of the intro. His left hand stays in view, and he sees his body when he looks down. Grey-box right arm built (see "The arm" below); real hands come with the art.
+- **Idea for later rooms:** Space = "do the thing" everywhere (stamp in the office, foot button in the game show).
 - Later rooms (foot button, hold buttons) use the fixed state, Shift and zoom, without the hand.
+
+### The arm (grey boxes)
+
+Built 2026-10-31. Everything is a child of `HandArea` (on the desk surface, middle of the desk).
+
+- **Shoulder** (fixed) → **Elbow** → **Wrist** → **Hand** (→ Palm, Grip).
+- `DeskHand` moves the **Wrist** inside the area (1.2 × 0.6 m, height 0.06 above the desk). Only the wrist is kept in the area.
+- `ArmPose` moves the **Elbow** forward and back with the wrist (`forwardFollow` 0.7; `sideFollow` 0, so left/right doesn't move it) and stretches the UpperArm and Forearm cubes between the points, in `LateUpdate`.
+- The **Hand** always points forward; `HandTurn` turns it around the wrist with Q/E.
+- A held stamp becomes a child of **Grip** (an empty object with scale 1, never a scaled cube). Each `Stamp` remembers its spot and glides itself.
+- Later, with the real arm model: Unity's Animation Rigging "Two Bone IK" can bend a real elbow so the arm never stretches. Shoulder, Elbow and Wrist are the points it needs.
 
 ### The office (grey boxes)
 
 - [x] Grey-box room (`OfficeSet`): floor, walls, desk, chair, green and red stamps, camera at his eyes. Materials in `Art/Materials`
 - [x] `Paper` prefab (sheet + 3D TextMeshPro) with the `Paper` script
 - [x] Papers on the desk: `OfficeRoom.ShowQuestion` lays 1 to 4 papers in a row on `PaperCenter` (0.24 m apart), after her `before` lines and before her question line. A single paper shows the statement, the others one option each
-- [ ] Fixed state: the mouse moves the stamp (later his right hand) in a desk area; the camera follows it softly
-- [ ] Hold Shift to look around (`SeatedLook`); letting go unzooms and turns the camera back to the main view
-- [ ] Zoom with the middle mouse button
-- [ ] Picking up a stamp: hold the left mouse button; letting go sends it back to its own spot
-- [ ] Stamping with the right mouse button: green once per question, red as often as needed, a stamp can't be changed; the question is done when every paper has a stamp
+- [x] Fixed state: the mouse moves his wrist in a desk area (`DeskHand`); the camera follows it softly (`SeatedLook`)
+- [x] Hold Shift to look around (`SeatedLook`); letting go turns the camera back to the main view
+- [x] Grey-box right arm: shoulder, elbow, wrist, hand (`ArmPose`)
+- [x] Picking up a stamp: hold the left mouse button; it glides into the hand in the hand's rotation, and glides back to its own spot when let go (`StampHolder`, `Stamp`)
+- [x] Turning the hand with Q and E (`HandTurn`)
+- [ ] Zoom with the right mouse button; letting go of Shift unzooms
+- [ ] Stamping with Space: green once per question, red as often as needed, a stamp can't be changed; the question is done when every paper has a stamp
 - [ ] One-paper questions (accept or decline) and 2 to 4 papers (only one can be accepted), answered by stamps instead of number keys
 - [ ] Papers move away, next question appears (now they just disappear)
 - [ ] The radio her voice comes from (maybe 3D sound)
@@ -226,7 +248,9 @@ Order to be decided (see "To decide").
 
 - [ ] **Tower with missing fingers (demo).** If the game show took five fingers from one hand, can that hand still hold a rope?
 - [ ] **Free presses (demo).** One or three free presses at the game show?
-- [ ] **Zoom in the fixed state.** Middle mouse zooms while holding Shift; can he also zoom without Shift?
+- [ ] **Zoom in the fixed state.** Right mouse zooms while holding Shift; can he also zoom without Shift?
+- [ ] **Sensitivity settings (later).** Separate settings for looking around and for moving the hand, on the settings screen. Today they are two Inspector values (`SeatedLook` and `DeskHand`).
+- [ ] **Turned ink mark (idea).** When the stamp is turned, the mark on the paper is turned too.
 - [ ] **Paper timing.** Papers appear before her question line. Check that it feels right in play (moving it is one line in `QuestionFlow`).
 - [ ] **Ending line.** "Great, now let's start the main test." already plays in `endLines`. Tick the office item?
 - [ ] **Game idea document.** Add the radio, the freed right hand and the controls to it.
@@ -242,6 +266,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-10-31 | Fixed state, Shift look, grey-box arm, picking up and hand turning built. `SeatedLook` has two states: fixed (main view, follows the Wrist softly with `SmoothDamp`, `followAmount` 0.3) and Shift (free look). New in `Scripts/Player`: `DeskHand` (wrist in `HandArea`, mouse sensitivity 0.0001), `ArmPose` (elbow follows the wrist forward/back, cubes stretched between points), `StampHolder` + `Stamp` (left mouse picks up the nearest stamp within 10 cm; it glides into `Grip` and becomes its child, and glides home when let go), `HandTurn` (Q/E, 80° left, 20° right, 120°/s). Input Actions cleaned up: Player map has only Look, LookAround (Shift), Pickup (left mouse), Zoom (right mouse), Stamp (Space), TurnHand (Q/E as one axis). Controls changed: Space stamps, right mouse zooms, Q/E turn the hand. Grey-box hands are now built instead of skipped. |
 | 2026-10-20 | Office grey boxes started. `OfficeSet` with desk, chair, walls, stamps and the camera at his eyes (0, 1.2, 0, tilted 40° down). `SeatedLook` turns the camera with the mouse (Input Actions `Player/Look`), with limits; Max Up 70 because "straight ahead" is 40° down. `Paper` prefab and script; `RoomBase.ShowQuestion` (new, called between `before` and `voice`) lets `OfficeRoom` lay 1 to 4 papers on `PaperCenter`. `OfficeRoom.AskQuestion` waits until stamping is built; `KeyboardTestRoom` still answers with number keys and calls `base.Transition` to remove the papers. Controls agreed (fixed state, Shift to look, middle mouse to zoom). New ideas: the radio, the freed right hand, the wake-up animation. |
 | 2026-10-20 | Breathing finished. `breath` column added to the question CSV (`A:2|any:1|none:2`), applied right after his answer, before her reaction; `QuestionLoader.ReadAnswerList` reads both `react` and `breath`. `BreathFalling` on the QuestionFlow object: rules per room (office: 2 → 1 after 1 quiet question, 1 → 0 after 2); a quiet question has no `breath:` anywhere, and setting the same state again resets the count. Timer moved to Stage 2. |
 | 2026-10-20 | Johnny's breathing built. New `JohnnyBreathing` (own AudioSource) and `ClipVariants` (random variant, never twice in a row). States -1 to 6 by number; clips named `JOH_BREATH_<state>_<number>`. `breath:2`, `breath:5_03` and `breath:-1` work in any clip list; the caption shows only when the state changes, from rows `JOH_BREATH_0`, `_1`, `_2` in `VoiceLines.csv`. Johnny's one-time sounds: `JOH_CRY` picks a random variant, `JOH_CRY_02` an exact one, caption from the group row; his breathing pauses while they play. Intro uses `breath:2` after the mouth line and `breath:0` before "Let's begin." Falling changed to "go to a set state". Old `JOH_BREATH_FAST`/`SLOW` moved to Spare. Scripts sorted into Core, Data, Audio, Rooms and Testing. |

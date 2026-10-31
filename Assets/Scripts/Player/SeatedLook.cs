@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // so this only rotates the camera; it never moves it.
 // Two states:
 //   Fixed state (main state): the camera looks at the room's main view
-//     and turns a little towards "follow" (his hand), softly.
+//     and turns a little towards "follow" (his wrist), softly.
 //   Holding Shift: the mouse turns his head freely, inside the limits.
 //     Letting go turns the camera softly back to the fixed state.
 // Put it on the camera, which sits at his eyes.
@@ -17,7 +17,7 @@ public class SeatedLook : MonoBehaviour
     public float maxDown = 50f;         // how far he can look down (further, to see the desk)
     public bool canLook = true;         // later: off during the wake-up animation
 
-    public Transform follow;            // what the camera follows softly in the fixed state (the Hand). Can stay empty.
+    public Transform follow;            // what the camera follows softly in the fixed state (the Wrist). Can stay empty.
     [Range(0f, 1f)]
     public float followAmount = 0.3f;   // 0 = never turns to it, 1 = looks straight at it
     public float smoothTime = 0.25f;    // about how many seconds the camera takes to catch up

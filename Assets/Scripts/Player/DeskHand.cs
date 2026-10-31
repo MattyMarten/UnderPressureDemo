@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // His right arm in the fixed state. The mouse moves his wrist around inside a flat area on the desk.
-// Only the Wrist is kept inside the area. His forearm and his hand are its children,
-// so they follow it, and the hand (with the stamp it holds) can reach a little past the area.
+// Only the Wrist is kept inside the area. His hand is its child, so it follows it,
+// and the hand (with the stamp it holds) can reach a little past the area.
+// ArmPose builds the forearm and upper arm from the wrist's position.
 // While Shift is held he looks around instead, and the wrist stays where it is.
 // Put it on the HandArea object, which lies on the desk surface. The Wrist is its child.
 public class DeskHand : MonoBehaviour
