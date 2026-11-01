@@ -6,10 +6,12 @@ using UnityEngine.InputSystem;
 // and the hand (with the stamp it holds) can reach a little past the area.
 // ArmPose builds the forearm and upper arm from the wrist's position.
 // While Shift is held he looks around instead, and the wrist stays where it is.
+// While a stamp is pressed (StampPress), the wrist can't move sideways and is pushed down.
 // Put it on the HandArea object, which lies on the desk surface. The Wrist is its child.
 public class DeskHand : MonoBehaviour
 {
     public SeatedLook look;            // to know when he is looking around (Shift)
+    public StampPress press;           // to know when a stamp is pressed down, and how far
     public Transform wrist;            // the Wrist child: the point that moves
 
     public Vector2 areaSize = new Vector2(1.2f, 0.6f);   // width (left-right) and depth (near-far), in meters
@@ -28,7 +30,7 @@ public class DeskHand : MonoBehaviour
 
     void Update()
     {
-        if (canMove && !look.IsLookingAround)
+        if (canMove && !look.IsLookingAround && !press.IsPressing)
         {
             Vector2 delta = moveAction.ReadValue<Vector2>();   // how far the mouse moved this frame
             offset += delta * sensitivity;                      // mouse up → wrist moves away from him
@@ -40,8 +42,9 @@ public class DeskHand : MonoBehaviour
             offset.y = Mathf.Clamp(offset.y, -halfDepth, halfDepth);
         }
 
-        // Local position: measured from HandArea, along HandArea's own axes
-        wrist.localPosition = new Vector3(offset.x, hoverHeight, offset.y);
+        // Local position: measured from HandArea, along HandArea's own axes.
+        // press.Depth is 0 except while stamping: then the wrist goes down so the stamp touches.
+        wrist.localPosition = new Vector3(offset.x, hoverHeight - press.Depth, offset.y);
     }
 
     // Draws the area as a yellow box on the desk in the Scene view (not in the game),

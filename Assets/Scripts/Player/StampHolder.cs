@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class StampHolder : MonoBehaviour
 {
     public SeatedLook look;                          // no picking up while he looks around (Shift)
+    public StampPress press;                         // a pressed-down stamp can't be let go
     public Transform grip;                           // the point in his palm where a stamp sits
     public List<Stamp> stamps = new List<Stamp>();   // GreenStamp and RedStamp
     public float reach = 0.1f;                       // how close (meters, seen from above) the hand must be to a stamp
@@ -40,8 +41,9 @@ public class StampHolder : MonoBehaviour
             }
         }
 
-        // The button is not held any more: the stamp goes home
-        if (Held != null && !pickupAction.IsPressed())
+        // The button is not held any more: the stamp goes home.
+        // But not while it is pressed down: then it goes home after Space is let go.
+        if (Held != null && !pickupAction.IsPressed() && !press.IsPressing)
         {
             Held.GoHome();
             Held = null;
