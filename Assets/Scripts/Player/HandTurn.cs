@@ -4,12 +4,12 @@ using UnityEngine.InputSystem;
 // Turns his hand at the wrist: hold Q to turn left, E to turn right.
 // The Hand turns around its own pivot, which sits on the wrist,
 // so the palm and a held stamp swing around the wrist. The forearm doesn't turn.
-// While Shift is held he only looks around, so the hand doesn't turn.
-// While a stamp is pressed down it doesn't turn either.
+// Q/E work even when no mouse button is held, so he can turn the hand while looking at it.
+// (Today there is only the right hand. In rework step 4 Q/E turn the active hand.)
+// While a stamp is pressed down it doesn't turn.
 // Put it on HandArea, next to DeskHand.
 public class HandTurn : MonoBehaviour
 {
-    public SeatedLook look;            // to know when he is looking around (Shift)
     public StampPress press;           // to know when a stamp is pressed down
     public Transform hand;             // the Hand child of the Wrist
     public float maxLeft = 80f;        // degrees he can turn it to the left
@@ -32,7 +32,7 @@ public class HandTurn : MonoBehaviour
         if (turnAction == null)
             return;
 
-        if (canTurn && !look.IsLookingAround && !press.IsPressing)
+        if (canTurn && !press.IsPressing)
         {
             float input = turnAction.ReadValue<float>();   // Q = -1, E = +1, neither (or both) = 0
             angle += input * turnSpeed * Time.deltaTime;

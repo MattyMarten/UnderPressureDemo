@@ -4,10 +4,11 @@ using UnityEngine.InputSystem;
 // Turns Johnny's head. He stays in his chair the whole game,
 // so this only rotates the camera; it never moves it.
 // Two states:
-//   Fixed state (main state): the camera looks at the room's main view
-//     and turns a little towards "follow" (his wrist), softly.
-//   Holding Shift: the mouse turns his head freely, inside the limits.
-//     Letting go turns the camera softly back to the fixed state.
+//   No hand button held (left or right mouse): he looks around.
+//     The mouse turns his head freely, inside the limits.
+//   A hand button held: the mouse moves a hand instead. The camera looks at the room's
+//     main view and turns a little towards "follow" (his wrist), softly.
+// (Rework step 2 changes the second state: no pull back to the main view, follow the active hand.)
 // Put it on the camera, which sits at his eyes.
 public class SeatedLook : MonoBehaviour
 {
@@ -22,11 +23,13 @@ public class SeatedLook : MonoBehaviour
     public float followAmount = 0.3f;   // 0 = never turns to it, 1 = looks straight at it
     public float smoothTime = 0.25f;    // about how many seconds the camera takes to catch up
 
-    // True while Shift is held. DeskHand reads it, so the hand stays still meanwhile.
+    // True while no hand button is held. DeskHand reads it, so the hand stays still meanwhile.
+    // CameraZoom reads it too: he can only zoom while looking around.
     public bool IsLookingAround { get; private set; }
 
     InputAction lookAction;
-    InputAction lookAroundAction;
+    InputAction leftHandAction;
+    InputAction rightHandAction;
     float startYaw;      // the main view: the camera's direction when the scene starts
     float startPitch;
     float yaw;           // how far he has turned left (-) or right (+) from the main view
@@ -38,10 +41,11 @@ public class SeatedLook : MonoBehaviour
     {
         // "Look" in the Player map of InputSystem_Actions: mouse movement (or the right stick)
         lookAction = InputSystem.actions.FindAction("Player/Look");
-        // "LookAround": Shift
-        lookAroundAction = InputSystem.actions.FindAction("Player/LookAround");
-        if (lookAroundAction == null)
-            Debug.LogError("SeatedLook: there is no action \"LookAround\" in the Player map. Add it in InputSystem_Actions, bound to Shift.");
+        // "LeftHand" and "RightHand": holding the left or the right mouse button
+        leftHandAction = InputSystem.actions.FindAction("Player/LeftHand");
+        rightHandAction = InputSystem.actions.FindAction("Player/RightHand");
+        if (leftHandAction == null || rightHandAction == null)
+            Debug.LogError("SeatedLook: the Player map needs the actions \"LeftHand\" (left mouse) and \"RightHand\" (right mouse). Add them in InputSystem_Actions.");
 
         // The rotation you set in the Inspector is the main view
         Vector3 start = transform.localEulerAngles;
@@ -57,7 +61,10 @@ public class SeatedLook : MonoBehaviour
         if (!canLook)
             return;
 
-        IsLookingAround = lookAroundAction != null && lookAroundAction.IsPressed();
+        // Looking around = neither hand button is held.
+        // "?." means: if the action is missing (null), don't ask it, the answer is just false.
+        bool handButtonHeld = leftHandAction?.IsPressed() == true || rightHandAction?.IsPressed() == true;
+        IsLookingAround = !handButtonHeld;
 
         if (IsLookingAround)
             LookAround();
@@ -67,7 +74,7 @@ public class SeatedLook : MonoBehaviour
         transform.localRotation = Quaternion.Euler(startPitch + pitch, startYaw + yaw, 0f);
     }
 
-    // Holding Shift: the mouse turns the head directly, like before
+    // No hand button held: the mouse turns the head directly
     void LookAround()
     {
         Vector2 delta = lookAction.ReadValue<Vector2>();   // how far the mouse moved this frame
@@ -78,12 +85,12 @@ public class SeatedLook : MonoBehaviour
         yaw = Mathf.Clamp(yaw, -maxLeftRight, maxLeftRight);
         pitch = Mathf.Clamp(pitch, -maxUp, maxDown);
 
-        // No old speed left over, so turning back starts calmly when Shift is let go
+        // No old speed left over, so following the hand starts calmly when a hand button is pressed
         yawSpeed = 0f;
         pitchSpeed = 0f;
     }
 
-    // Fixed state: turn softly towards the main view, a little towards "follow"
+    // A hand button held: turn softly towards the main view, a little towards "follow"
     void FollowSoftly()
     {
         float targetYaw = 0f;     // 0, 0 = straight at the main view

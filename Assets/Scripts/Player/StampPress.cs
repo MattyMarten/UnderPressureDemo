@@ -2,15 +2,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Presses the stamp in his hand down with Space.
+// Presses the stamp in his hand down with Space (the "Use" action).
 // Space pushes it down onto whatever is under it (a paper or the desk) and leaves an ink mark there.
 // It stays down while Space is held and comes back up when Space is let go.
 // While it is pressing, the hand can't move or turn, and the stamp can't be let go.
-// It doesn't decide answers: the paper will read its stamp in the next step.
+// It works even when no mouse button is held, so he can look at the paper and still stamp.
+// It doesn't decide answers: the paper will read its stamp in a later step.
 // Put it on HandArea, next to DeskHand.
 public class StampPress : MonoBehaviour
 {
-    public SeatedLook look;            // no stamping while he looks around (Shift)
     public StampHolder holder;         // to know which stamp is in his hand
     public InkMark inkMarkPrefab;      // the InkMark prefab from Assets/Prefabs
     public Transform deskMarks;        // marks that don't land on a paper become children of this (OfficeSet)
@@ -24,23 +24,24 @@ public class StampPress : MonoBehaviour
     // How far down the wrist is pushed now, in meters. DeskHand reads it.
     public float Depth { get; private set; }
 
-    InputAction stampAction;
+    InputAction useAction;
     int marksMade;   // how many marks so far in this room, so each new one goes on top
 
     void Start()
     {
-        stampAction = InputSystem.actions.FindAction("Player/Stamp");
-        if (stampAction == null)
-            Debug.LogError("StampPress: there is no action \"Stamp\" in the Player map. Add it in InputSystem_Actions, bound to Space.");
+        // "Use" in the Player map of InputSystem_Actions: Space
+        useAction = InputSystem.actions.FindAction("Player/Use");
+        if (useAction == null)
+            Debug.LogError("StampPress: there is no action \"Use\" in the Player map. Add it in InputSystem_Actions, bound to Space.");
     }
 
     void Update()
     {
-        if (stampAction == null)
+        if (useAction == null)
             return;
 
-        // Space was just pressed, he isn't already pressing, and he isn't looking around
-        if (stampAction.WasPressedThisFrame() && !IsPressing && !look.IsLookingAround)
+        // Space was just pressed and he isn't already pressing
+        if (useAction.WasPressedThisFrame() && !IsPressing)
         {
             Stamp stamp = holder.Held;
 
@@ -75,7 +76,7 @@ public class StampPress : MonoBehaviour
             LeaveMark(stamp, hit);
 
         // Stay down while Space is held
-        while (stampAction.IsPressed())
+        while (useAction.IsPressed())
             yield return null;
 
         // Up

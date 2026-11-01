@@ -16,18 +16,36 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "LookAround",
+                    "name": "LeftHand",
                     "type": "Button",
-                    "id": "71a26c80-1988-440f-8d01-83abd650603e",
+                    "id": "1e31d0ee-c8f9-42af-8ae3-83d701917004",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Pickup",
+                    "name": "RightHand",
                     "type": "Button",
-                    "id": "29c72c85-ad42-4cef-8ba1-b160a2ef40cd",
+                    "id": "6a94b08d-1616-4998-aa2a-54bd34430ab4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "GripLeft",
+                    "type": "Button",
+                    "id": "f264e1ea-dfc0-46e5-ab0a-a3d565d1334d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "GripRight",
+                    "type": "Button",
+                    "id": "597eafb9-cbe8-4f08-95e8-05e40ffa4aba",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -43,7 +61,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Stamp",
+                    "name": "Use",
                     "type": "Button",
                     "id": "caf43d1f-52df-4ee5-b457-7d29022226bb",
                     "expectedControlType": "",
@@ -59,6 +77,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "LeftFoot",
+                    "type": "Button",
+                    "id": "859fdab1-4ef7-495c-b4a2-9f2f842ad4ea",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightFoot",
+                    "type": "Button",
+                    "id": "fbd3eed3-35e3-4f7a-a3ca-f239735daddc",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -97,30 +133,52 @@
                 },
                 {
                     "name": "",
-                    "id": "7d2beb05-f68a-4232-8e9e-84864810e01b",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LookAround",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "aaed3ab0-033d-48f1-8328-bc30c7110bfa",
+                    "id": "f7c0e046-8305-4ef2-a8a0-005bc4a81765",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pickup",
+                    "action": "LeftHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "84f490ea-1ec9-4e30-bd5f-082631acb0d1",
+                    "id": "9e88d6c2-0994-4aaa-90ae-b08309dc4759",
                     "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightHand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "508f5a13-ca53-4ca5-a4df-627dc3932b4c",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GripLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a5a68aa4-5fac-46b2-980e-883c0ad125b9",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GripRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "31c2eb72-2281-485f-991b-8d077f5a6cf1",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -130,12 +188,12 @@
                 },
                 {
                     "name": "",
-                    "id": "e20bad01-081a-4d83-965f-59dad0bd8edb",
+                    "id": "1ef0db8c-2dfd-4339-85d0-e077ca709f77",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Stamp",
+                    "action": "Use",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -171,6 +229,28 @@
                     "action": "TurnHand",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "dbb795ab-7818-4c7a-ac56-0ab7d322dc5d",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftFoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f01ceb6d-bff6-4c21-a8c2-32589529b4c8",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightFoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -595,7 +675,7 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -606,7 +686,7 @@
                     "path": "<Pen>/tip",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -639,7 +719,7 @@
                     "path": "<Mouse>/scroll",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "ScrollWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
