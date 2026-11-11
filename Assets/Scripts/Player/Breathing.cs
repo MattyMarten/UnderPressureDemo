@@ -8,6 +8,7 @@ using TMPro;
 // A cycle (in + out) gets the worse of its two halves.
 // After "cycles per check" cycles, the worst cycle lowers the stress:
 // Perfect = 2 bars, Good = 1 bar, Bad = no change.
+// A Bad in cancels the breath: the cycle is already Bad, so there is no out.
 // The out ends when Shift is pressed again. If nobody presses in time, the out counts as Bad.
 // The result word (Perfect, Good, Bad) shows in its colour when Shift is released and pressed again.
 // Off by more than "silent margin" shows nothing, so quick taps don't flash text.
@@ -52,7 +53,7 @@ public class Breathing : MonoBehaviour
         get
         {
             if (CurrentPhase == Phase.In) return Mathf.Clamp01(phaseTime / inSeconds);
-            if (CurrentPhase == Phase.Out) return Mathf.Clamp01(1f - phaseTime / outSeconds);
+            if (CurrentPhase == Phase.Out) return outStartFill * Mathf.Clamp01(1f - phaseTime / outSeconds);
             return 0f;
         }
     }
@@ -60,6 +61,7 @@ public class Breathing : MonoBehaviour
     InputAction breatheAction;
     float phaseTime;          // seconds since this in or out started
     Result inResult;          // the judged in of the cycle that is going on now
+    float outStartFill;       // how full the box was when the in ended: the out shrinks from there
     float resultTimer;        // seconds left before the result word disappears
     int cyclesDone;           // cycles since the last check
     Result worstInCheck;      // the worst cycle since the last check
@@ -94,12 +96,25 @@ public class Breathing : MonoBehaviour
                 break;
 
             case Phase.In:
-                // Shift released: the in is over. Judge it and start the out.
+                // Shift released: the in is over. Judge it.
                 if (!held)
                 {
                     inResult = Judge(phaseTime, inSeconds);
                     Show(inResult, phaseTime, inSeconds);
-                    StartPhase(Phase.Out);
+
+                    if (inResult == Result.Bad)
+                    {
+                        // The cycle is Bad whatever the out does, so stop here.
+                        // Waiting hides the box, and a new press starts a new breath.
+                        FinishCycle(Result.Bad);
+                        StartPhase(Phase.Waiting);
+                    }
+                    else
+                    {
+                        // Perfect or Good: breathe out, starting from where the box is now
+                        outStartFill = Fill;
+                        StartPhase(Phase.Out);
+                    }
                 }
                 break;
 
