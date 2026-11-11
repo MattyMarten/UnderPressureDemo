@@ -8,8 +8,8 @@ Tick a box by changing `- [ ]` to `- [x]`.
 
 ## Current status
 
-- **Where we are:** Stage 1 — the office. The Input Actions are on the 2026-11-01 version (mouse buttons for hands, A/D grip, W zoom, Q/E turn, Z/C feet). Looking without Shift, gripping with D, zoom on W and stamping with ink work. Johnny's dummy model sits in the chair, and his real right arm follows the hand with IK; the grey-box arm cubes are hidden. The stamp and the hand have different reaches, so the stamp is sometimes too far from the palm: the whole stamp and hand system gets reworked with `Grabbable`. On 2026-11-09 the controls were redesigned again (objects lead the hand, 6 inputs), a stress and breathing system was added, and the office became a short opening that teaches one thing at a time. See "Controls", "Stress and breathing" and "The office opening".
-- **Next step:** step 1 of "First test version: build order": change the Input Actions to the new controls. Then free look and a rough breathing test, then `Grabbable` with the stamp and hand rework.
+- **Where we are:** Stage 1b, first test version, group A done (steps 1–3). The Input Actions are on the 2026-11-09 controls (Grab on left mouse, W zoom, Space use, A/D feet, Shift breathe, Enter, Esc, arrows). Zoom works all the time and looking is slower while zoomed. A rough breathing test works: `Stress` (bars as plain text), `Breathing` (Shift, judging, lowers stress) and `BreathBox` (the bar). Stamping still runs on the old system (`StampHolder` now on left mouse) until `Grabbable` replaces it. Johnny's dummy model sits in the chair, and his real right arm follows the hand with IK. The stamp and the hand have different reaches, so the stamp is sometimes too far from the palm: fixed by `Grabbable`.
+- **Next step:** step 4 of "First test version: build order": `Grabbable` with zones, the hand following the held object, and leaning only when the hand can't reach (steps 4–5), split into small parts.
 
 ---
 
@@ -116,6 +116,7 @@ Agreed 2026-11-09. Every object that can be held gets one shared script, `Grabba
 
 - **Inspector settings:** Zone (the invisible box it can move in while held), Hands (one or two), Grip point (empty child where the hand holds it, like `Grip` now), Hover height and follow speed, Idle spot (where it glides back when let go).
 - **How it moves:** a ray from the camera hits the desk, and the object hovers just above that point, under the gaze, not in the middle of the screen. Looking outside the zone stops it at the zone's edge.
+- **Reaching and leaning (agreed 2026-11-12):** pressing left mouse doesn't move the camera; the hand reaches out to the object and picks it up. The head still turns with the mouse while holding. Only when the object goes past the hand's reach do the body and camera lean forward, just enough for the hand to follow (up to a maximum, smoothed so it doesn't wobble). On release the object glides to its spot, the hand slowly goes back to its idle spot, and the body and camera lean back.
 - **Examples:** stamp = `Grabbable` + `StampPress`. Rope = `Grabbable` set to two hands + a rope script.
 - **Old scripts:** `DeskHand` gets its target from the object instead of the mouse. `Stamp`, `StampPress` and `InkMark` mostly stay. `HandTurn` goes to Spare.
 
@@ -145,6 +146,13 @@ No adrenaline effect.
 - A cycle (in + out) gets the worse of its two halves.
 - A check happens after N cycles ("cycles per check", an Inspector value, may differ per room). The check gets the worst of its cycles: Perfect = −2 bars, Good = −1 bar, Bad = no change.
 - First test: 1 cycle per check. Switch to 2 if stress drops too fast (with 2: 10 bars to 0 takes at least 100 seconds).
+- **Decided in the breathing test (2026-11-12):**
+  - The bar is horizontal, under the result word, and fills from the middle out to both edges during the in (full at 4 s), and shrinks back during the out (empty at 6 s). Following it: release when full, press again when empty.
+  - The bar is hidden while he isn't breathing and fades in (0.2 s) when Shift is pressed.
+  - The result word shows in the middle of the screen, only the word: Perfect green, Good blue, Bad red. It stays 0.8 s. Off by more than 1 s: no word (no flashing on quick taps).
+  - A Bad in cancels the breath: the cycle is already Bad, so there is no out; the bar disappears and a new press starts a new breath.
+  - The out shrinks from where the in stopped (no jump to full) and still empties at 6 s.
+  - The out ends when Shift is pressed again. No press within 7 s (6 + 1): the breath counts as Bad, quietly, and he waits for a new breath.
 
 **Sound.** Johnny's breathing loops by stress level, as now (`JohnnyBreathing`, `ClipVariants`, file names `JOH_BREATH_<state>_<number>` stay). While the player breathes with Shift, the loop stops and his manual in and out breaths play instead. His one-time sounds (`JOH_CRY` …) work as before.
 
@@ -184,7 +192,7 @@ A dummy model to work on animations and see how it looks; it can be swapped for 
 - [ ] Right hand follows the held object's grip point (with the `Grabbable` rework)
 - [ ] Left hand tied to the chair for the whole office (a pose)
 - [ ] Wake-up: panicking while tied, then calmer as stress goes down (poses or animations)
-- [ ] Leaning forward while holding (a lean pose or the spine bone)
+- [ ] Leaning forward while holding, only when the hand can't reach (a lean pose or the spine bone)
 - [ ] Hand shake on the real hands, by stress level
 - [ ] Left arm IK for the rope (tower)
 - [ ] Missing fingers and bleeding (game show). Maybe the same bone-shrinking trick as `HideHead`; decide when building
@@ -200,12 +208,12 @@ A dummy model to work on animations and see how it looks; it can be swapped for 
 - [x] Hold Shift to look around (`SeatedLook`) *(replaced: no button = look; Shift is now breathing)*
 - [x] Grey-box right arm: shoulder, elbow, wrist, hand (`ArmPose`)
 - [x] Picking up a stamp with the left mouse button (`StampHolder`, `Stamp`) *(becomes `Grabbable`: look at it and hold left mouse)*
-- [x] Turning the hand with Q and E (`HandTurn`) *(cut 2026-11-09)*
+- [x] Turning the hand with Q and E (`HandTurn`) *(cut 2026-11-09; script in `Scripts/Spare` since 2026-11-11)*
 - [x] Zoom with the right mouse button while holding Shift (`CameraZoom`) *(moves to W, works while holding too)*
 - [x] Stamping with Space: press and hold, ink marks on paper or desk, ink pools with 5 fading uses (`StampPress`, `InkMark`)
-- [x] Input Actions on the 2026-11-01 controls: LeftHand/RightHand (mouse buttons), GripLeft/GripRight (A/D), Zoom (W), Use (Space), TurnHand (Q/E), LeftFoot/RightFoot (Z/C) *(change again in build step 1)*
-- [x] No button held = look around (`SeatedLook`); a hand button still pulls the view back to the main view *(changes in build step 2)*
-- [x] Gripping a stamp with D (`StampHolder`) and zoom on W, only while looking (`CameraZoom`) *(replaced by `Grabbable`; zoom also while holding)*
+- [x] Input Actions on the 2026-11-01 controls *(replaced in build step 1 by the 2026-11-09 controls)*
+- [x] No button held = look around (`SeatedLook`); a mouse button still pulls the view back to the main view *(stays until `Grabbable`, build step 4)*
+- [x] Gripping a stamp with D (`StampHolder`) and zoom on W, only while looking (`CameraZoom`) *(since build step 1 `StampHolder` grabs with left mouse until `Grabbable`; since build step 2 zoom works while holding)*
 - [x] 15 questions in CSV
 - [ ] The radio her voice comes from (maybe 3D sound)
 - [ ] Johnny's mouth sewn shut: mumbles and breathing only
@@ -245,18 +253,21 @@ Office and title screen only, for a few close friends. It ends with a black scre
 Replaces "Office rework: build order" (2026-11-01). Changed 2026-11-10: breathing is tried early, and one question works from start to end before the opening is built.
 
 **A. Controls and a quick breathing test**
-- [ ] 1. Input Actions to the new controls:
+- [x] 1. Input Actions to the new controls:
   - Keep: Look (mouse), Zoom (W), Use (Space)
   - Change: LeftHand (left mouse) becomes Grab, for the right hand. RightHand (right mouse) stays, for the rope's second hand. LeftFoot/RightFoot move from Z/C to A/D
   - Remove: GripLeft, GripRight, TurnHand (Q/E). `HandTurn` goes to Spare
   - Add: Breathe (Shift), Skip (Enter), Pause (Esc), LookSensitivity (left/right arrow), HoldSensitivity (up/down arrow)
   - Update the scripts that read the old actions (`SeatedLook`, `StampHolder`, `HandTurn`) so nothing breaks
-- [ ] 2. Free look: no button = look around, inside the head-turning limits. Zoom on W, also while holding; zoomed look sensitivity scales down automatically
-- [ ] 3. Rough breathing test: Shift, the on-screen box and the stress number as plain text. Play it, tune the 4/6 timing and the judging. If it doesn't feel good, change the design before building the opening around it
+  - *Done 2026-11-11: Breathe is on Left Shift only. `HandTurn` moved to `Scripts/Spare`. `StampHolder` grabs with left mouse (while held, as soon as a stamp is in reach) until step 4.*
+- [x] 2. Free look: no button = look around, inside the head-turning limits. Zoom on W, also while holding; zoomed look sensitivity scales down automatically
+  - *Done 2026-11-11: `CameraZoom` zooms all the time; `SeatedLook` multiplies the look sensitivity by current / normal Field of View (half as fast at full zoom). What the camera does while holding stays as it is until step 4.*
+- [x] 3. Rough breathing test: Shift, the on-screen box and the stress number as plain text. Play it, tune the 4/6 timing and the judging. If it doesn't feel good, change the design before building the opening around it
+  - *Done 2026-11-12: `Stress` (Core, bars 0–10, `Add`/`Lower`, plain text, test buttons in the ⋮ menu), `Breathing` (on the Stress object) and `BreathBox` (bar with a Canvas Group). Decisions in "Stress and breathing". Timing kept at 4/6 for now.*
 
 **B. Grabbing, stamping and one full question**
 - [ ] 4. `Grabbable` with zones (the stamp and hand rework): look at an object and hold left mouse to pick it up; it follows the gaze inside its zone; the camera is limited to the zone while holding; release = it glides back to its idle spot. The real hand (`RealHandTarget`) follows the object's grip point, so hand and stamp always have the same reach. Replaces `StampHolder` and the mouse-driven `DeskHand`. Papers and stamps only ever land inside the hand's reach
-- [ ] 5. Lean forward while holding: the camera moves about 10–15 cm forward and down, smoothly, and back on release. The body leans with it (a lean pose on the Animator, or turning the spine bone), so the shoulder and arm still match
+- [ ] 5. Lean forward only when needed: the camera stays in place when grabbing; when the held object goes past the hand's reach, the body and camera lean forward just enough (up to a maximum, smoothly), and back on release. The body leans with it (a lean pose on the Animator, or turning the spine bone), so the shoulder and arm still match. See "Reaching and leaning" in "Grabbable objects"
 - [ ] 6. Stamping on `Grabbable`: `StampPress` and `InkMark` on the new grab, stamps always straight
 - [ ] 7. "Stamp here:" box: the paper reads its stamp (about 75% inside, first counting stamp only, green once), outline goes darker
 - [ ] 8. Answering by stamps instead of number keys, with her overwrite and "only one paper" lines
@@ -269,7 +280,7 @@ Replaces "Office rework: build order" (2026-11-01). Changed 2026-11-10: breathin
 - [ ] 13. Place everything at its real size: desk, the hand's reach, printer, shredder slot, hatch, radio, stress device, the three light switches, the window, the collectable. Check what he sees when the lights come on and how far he can turn his head
 
 **D. Stress and breathing, finished**
-- [ ] 14. Stress level (0–10, add only), the `stress` column in the CSV, stress in the choice log
+- [ ] 14. Stress level (0–10, add only), the `stress` column in the CSV, stress in the choice log. Move the old `BreathFalling` (still on an object in the scene) to Spare
 - [ ] 15. Stress device on the desk (text + 10 bars) and the effects: blur, her voice harder to hear
 - [ ] 16. Breathing, finished: the box, judging, "cycles per check" in the Inspector, manual breath sounds
 - [ ] 17. Hand shake on the real hand, by stress level
@@ -285,7 +296,7 @@ Replaces "Office rework: build order" (2026-11-01). Changed 2026-11-10: breathin
 
 **F. Menus, look and the build**
 - [ ] 25. Pause menu (Esc): Resume, Options, Quit
-- [ ] 26. Sensitivity on the arrow keys, with a small popup ("Look sensitivity: 6")
+- [ ] 26. Sensitivity on the arrow keys, with a small popup that says which way it changed ("Look sensitivity increased: 7", "Look sensitivity decreased: 6")
 - [ ] 27. Boot flow, small for the first test: brightness (with a "barely visible" symbol) and sensitivity, warnings, title screen (desk, chair, one small light; Play, Options, Credits, Exit), contract signed with the mouse (any scribble + Accept), fade to black, wake-up. The rest of the first-launch settings later
 - [ ] 28. Choice log saved to a file at the end (answers, answer times, stress), so testers can send it back
 - [ ] 29. Room design: bought or downloaded assets for the desk, walls and items; light, sound and mood (rain outside the window)
@@ -485,6 +496,7 @@ Order to be decided (see "To decide").
 
 | Date | What happened |
 |---|---|
+| 2026-11-11/12 | Build steps 1–3 done. Step 1: Input Actions on the 2026-11-09 controls (LeftHand renamed to Grab; GripLeft, GripRight and TurnHand removed; feet on A/D; Breathe on Left Shift, Skip, Pause, LookSensitivity and HoldSensitivity added); `HandTurn` to `Scripts/Spare`; `SeatedLook` and `StampHolder` read Grab. Step 2: zoom while holding, look slower while zoomed (Field of View ratio); holding left as it is until `Grabbable`. Step 3: rough breathing test with `Stress`, `Breathing` and `BreathBox`; bar fills from the middle, hidden while not breathing, result word in the middle for 0.8 s in green/blue/red, no word when more than 1 s off, a Bad in cancels the breath, the out shrinks from where the in stopped, quiet Bad after 7 s. Grabbing redesigned: the camera stays when grabbing, the hand reaches, the body leans only when the object is past the hand's reach (steps 4–5). Sensitivity popup says "increased"/"decreased". |
 | 2026-11-10 | The demo becomes a small complete game (goals: learn, give people something to play, test the idea), about 30 minutes. Two kinds of builds: rough test versions for friends, and the finished release demo. Stage 5 rebuilt: her ending, title and description, your statistics, "how others answered" if possible, a collection screen (title pieces, titles got, notes found), in-game achievements, saving after each room and at the end. Steamworks learned in the demo: cloud saves shared with the full game; achievements given in the full game from the demo save. Red stamp hatch decided: fake hole. |
 | 2026-11-10 | First test version reworked into 31 steps in six groups. A rough breathing test right after the controls; one question works from start to end before the opening. New: lean forward while holding (camera and body), papers from a printer along fixed paths and out through a shredder in the desk (no physics), green stamp in a stand and the red stamp rising from a hatch on question 2 (fake hole first, so the bought table needs no changes), room layout in grey boxes at real sizes before the opening, Johnny's tied left hand and wake-up poses, pause menu, choice log saved to a file for testers, small boot flow, room design with bought assets, build sent as a rar on Google Drive or OneDrive. Collectables are marks and notes from earlier subjects. Demo saving suggested: no mid-run saves, only collectables, lines heard and settings. Voice lines are written as we build. |
 | up to 2026-11-09 | Found in the project but not logged before: Input Actions changed to the 2026-11-01 controls (old rework step 1), `SeatedLook` without Shift, gripping with D, zoom on W. Johnny's dummy model (Mixamo Remy) with sitting idle, `JohnnyAnimator`, right arm IK with Animation Rigging (`ArmRig`, `RightArmIK`, `RealHandTarget`) and `HideHead`; grey-box arm cubes hidden. Problem: stamp and hand have different reaches, so the stamp is sometimes too far from the palm; the stamp and hand system will be reworked. |
