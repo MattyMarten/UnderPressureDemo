@@ -3,54 +3,39 @@ using UnityEngine.InputSystem;
 
 // Turns Johnny's head. He stays in his chair the whole game,
 // so this only rotates the camera; it never moves it.
-// Two states:
-//   No mouse button held: he looks around.
-//     The mouse turns his head freely, inside the limits.
-//   Left mouse (Grab) or right mouse (RightHand) held: the mouse moves his hand instead.
-//     The camera looks at the room's main view and turns a little towards "follow" (his wrist), softly.
-// (Build step 2 changes this: free look all the time, and the held object follows the gaze.)
+// The mouse always turns his head, inside the limits. No button is needed.
+// While zoomed, the same mouse movement turns the head less.
+// While he holds an object, the middle of the screen stays over the object's zone:
+// he can look around inside it, but not past its edges.
 // Put it on the camera, which sits at his eyes.
 public class SeatedLook : MonoBehaviour
 {
-    public float sensitivity = 0.1f;    // degrees per pixel of mouse movement while looking around, not zoomed
+    public float sensitivity = 0.1f;    // degrees per pixel of mouse movement, not zoomed
     public float maxLeftRight = 70f;    // how far he can turn his head to each side
     public float maxUp = 30f;           // how far he can look up
     public float maxDown = 50f;         // how far he can look down (further, to see the desk)
-    public bool canLook = true;         // later: off during the wake-up animation
-
-    public Transform follow;            // what the camera follows softly in the fixed state (the Wrist). Can stay empty.
-    [Range(0f, 1f)]
-    public float followAmount = 0.3f;   // 0 = never turns to it, 1 = looks straight at it
-    public float smoothTime = 0.25f;    // about how many seconds the camera takes to catch up
-
-    // True while no mouse button is held. DeskHand reads it, so the hand stays still meanwhile.
-    public bool IsLookingAround { get; private set; }
+    public bool canLook = true;         // later: off during parts of the wake-up
 
     InputAction lookAction;
-    InputAction grabAction;
-    InputAction rightHandAction;
-    float startYaw;      // the main view: the camera's direction when the scene starts
+    float startYaw;          // the main view: the camera's direction when the scene starts
     float startPitch;
-    float yaw;           // how far he has turned left (-) or right (+) from the main view
-    float pitch;         // how far he has looked up (-) or down (+) from the main view
-    float yawSpeed;      // SmoothDamp keeps its current speed in these between frames
-    float pitchSpeed;
+    float yaw;               // how far he has turned left (-) or right (+) from the main view
+    float pitch;             // how far he has looked up (-) or down (+) from the main view
     Camera cam;              // the camera on this object, to know how far CameraZoom has zoomed
+    Grabber grabber;         // the Grabber on this object, to know if he holds something
     float normalFieldOfView; // its Field of View when the scene starts (not zoomed)
 
     void Start()
     {
         // "Look" in the Player map of InputSystem_Actions: mouse movement (or the right stick)
         lookAction = InputSystem.actions.FindAction("Player/Look");
-        // "Grab" (left mouse) and "RightHand" (right mouse): holding a mouse button
-        grabAction = InputSystem.actions.FindAction("Player/Grab");
-        rightHandAction = InputSystem.actions.FindAction("Player/RightHand");
-        if (grabAction == null || rightHandAction == null)
-            Debug.LogError("SeatedLook: the Player map needs the actions \"Grab\" (left mouse) and \"RightHand\" (right mouse). Add them in InputSystem_Actions.");
 
         // The Field of View you set in the Inspector is "not zoomed"
         cam = GetComponent<Camera>();
         normalFieldOfView = cam.fieldOfView;
+
+        // Can be missing: then the view is never limited
+        grabber = GetComponent<Grabber>();
 
         // The rotation you set in the Inspector is the main view
         Vector3 start = transform.localEulerAngles;
@@ -66,23 +51,11 @@ public class SeatedLook : MonoBehaviour
         if (!canLook)
             return;
 
-        // Looking around = neither mouse button is held.
-        // "?." means: if the action is missing (null), don't ask it, the answer is just false.
-        bool handButtonHeld = grabAction?.IsPressed() == true || rightHandAction?.IsPressed() == true;
-        IsLookingAround = !handButtonHeld;
-
-        if (IsLookingAround)
-            LookAround();
-        else
-            FollowSoftly();
-
-        transform.localRotation = Quaternion.Euler(startPitch + pitch, startYaw + yaw, 0f);
-    }
-
-    // No hand button held: the mouse turns the head directly
-    void LookAround()
-    {
         Vector2 delta = lookAction.ReadValue<Vector2>();   // how far the mouse moved this frame
+
+        // Where he looked last frame, in case the new direction isn't allowed
+        float lastYaw = yaw;
+        float lastPitch = pitch;
 
         // Zoomed in, the same mouse movement should turn the head less, or the view jumps.
         // Not zoomed: 60 / 60 = 1. Fully zoomed: 30 / 60 = 0.5, so half as fast.
@@ -95,35 +68,54 @@ public class SeatedLook : MonoBehaviour
         yaw = Mathf.Clamp(yaw, -maxLeftRight, maxLeftRight);
         pitch = Mathf.Clamp(pitch, -maxUp, maxDown);
 
-        // No old speed left over, so following the hand starts calmly when a hand button is pressed
-        yawSpeed = 0f;
-        pitchSpeed = 0f;
+        if (grabber != null && grabber.Held != null)
+            KeepGazeInZone(grabber.Held.zone, lastYaw, lastPitch);
+
+        transform.localRotation = Quaternion.Euler(startPitch + pitch, startYaw + yaw, 0f);
     }
 
-    // A hand button held: turn softly towards the main view, a little towards "follow"
-    void FollowSoftly()
+    // While he holds something, the middle of the screen must stay over the object's zone.
+    // If the new yaw and pitch look past the zone, turn the head back to the nearest point inside it.
+    void KeepGazeInZone(GrabZone zone, float lastYaw, float lastPitch)
     {
-        float targetYaw = 0f;     // 0, 0 = straight at the main view
-        float targetPitch = 0f;
+        // The line he would look along with the new yaw and pitch
+        Ray gaze = new Ray(transform.position, GazeDirection(yaw, pitch));
 
-        if (follow != null)
+        // Looking above the desk: the gaze never hits it. Keep last frame's direction.
+        if (!zone.Floor.Raycast(gaze, out float distance))
         {
-            // The direction from his eyes to the hand, as angles
-            Vector3 direction = follow.position - transform.position;
-            float flat = new Vector2(direction.x, direction.z).magnitude;   // the distance along the floor
-            float yawToIt = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            float pitchToIt = -Mathf.Atan2(direction.y, flat) * Mathf.Rad2Deg;   // below him → positive (down)
-
-            // Measured from the main view, then only a part of it
-            targetYaw = Mathf.DeltaAngle(startYaw, yawToIt) * followAmount;
-            targetPitch = Mathf.DeltaAngle(startPitch, pitchToIt) * followAmount;
+            yaw = lastYaw;
+            pitch = lastPitch;
+            return;
         }
 
-        targetYaw = Mathf.Clamp(targetYaw, -maxLeftRight, maxLeftRight);
-        targetPitch = Mathf.Clamp(targetPitch, -maxUp, maxDown);
+        Vector3 onDesk = gaze.GetPoint(distance);   // where he would look on the desk
+        Vector3 inZone = zone.Clamp(onDesk);        // the nearest point inside the zone
 
-        // Move a step towards the target: fast when far away, slower when close
-        yaw = Mathf.SmoothDamp(yaw, targetYaw, ref yawSpeed, smoothTime);
-        pitch = Mathf.SmoothDamp(pitch, targetPitch, ref pitchSpeed, smoothTime);
+        // Inside the zone already: Clamp didn't move it, so nothing to do
+        if (Vector3.Distance(onDesk, inZone) < 0.0001f)
+            return;
+
+        // Outside: work out the yaw and pitch that look straight at the point inside the zone.
+        // The same angles as the old "follow" code: Atan2 turns a direction into an angle.
+        Vector3 direction = inZone - transform.position;
+        if (transform.parent != null)
+            direction = transform.parent.InverseTransformDirection(direction);   // into the same space as yaw and pitch
+
+        float flat = new Vector2(direction.x, direction.z).magnitude;   // the distance along the floor
+        yaw = Mathf.DeltaAngle(startYaw, Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg);
+        pitch = Mathf.DeltaAngle(startPitch, -Mathf.Atan2(direction.y, flat) * Mathf.Rad2Deg);   // below him → positive (down)
+
+        // The head limits still win
+        yaw = Mathf.Clamp(yaw, -maxLeftRight, maxLeftRight);
+        pitch = Mathf.Clamp(pitch, -maxUp, maxDown);
+    }
+
+    // The direction he would look in with this yaw and pitch, in the world
+    Vector3 GazeDirection(float yawToTest, float pitchToTest)
+    {
+        Quaternion local = Quaternion.Euler(startPitch + pitchToTest, startYaw + yawToTest, 0f);
+        Quaternion world = transform.parent != null ? transform.parent.rotation * local : local;
+        return world * Vector3.forward;   // a rotation times "forward" = the direction it points
     }
 }

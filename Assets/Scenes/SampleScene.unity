@@ -926,6 +926,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 135985947}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &169882612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 169882613}
+  - component: {fileID: 169882614}
+  m_Layer: 0
+  m_Name: StampZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &169882613
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169882612}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.75, z: 0.55}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1132714604}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &169882614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169882612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff5ad9e2b7eae4a49b757a2e2d25b290, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GrabZone
+  size: {x: 1.17, y: 0.56}
 --- !u!1 &237593077
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,6 +1239,7 @@ GameObject:
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
   - component: {fileID: 330585549}
+  - component: {fileID: 330585550}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1336,9 +1382,6 @@ MonoBehaviour:
   maxUp: 70
   maxDown: 50
   canLook: 1
-  follow: {fileID: 1067515711}
-  followAmount: 0.3
-  smoothTime: 0.25
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1354,6 +1397,20 @@ MonoBehaviour:
   zoomedFieldOfView: 30
   smoothTime: 0.15
   canZoom: 1
+--- !u!114 &330585550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4919c7f78bf5bd440b89a7dff9567596, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grabber
+  reach: 1.5
+  canGrab: 1
 --- !u!1 &350862840
 GameObject:
   m_ObjectHideFlags: 0
@@ -2753,6 +2810,7 @@ Transform:
   - {fileID: 90897755}
   - {fileID: 1346953495}
   - {fileID: 1930166639}
+  - {fileID: 169882613}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1188241777
@@ -3145,12 +3203,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd68f62f7cc17ca4f8edaf1dd1a18edd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeskHand
-  look: {fileID: 330585548}
-  press: {fileID: 1346953500}
+  grabber: {fileID: 330585550}
   wrist: {fileID: 1067515711}
+  grip: {fileID: 739892496}
   areaSize: {x: 1.2, y: 0.6}
-  hoverHeight: 0.06
-  sensitivity: 0.0001
+  reachTime: 0.15
+  returnTime: 0.5
   canMove: 1
 --- !u!114 &1346953497
 MonoBehaviour:
@@ -3718,6 +3776,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1570168911}
   - component: {fileID: 1570168912}
+  - component: {fileID: 1570168913}
   m_Layer: 0
   m_Name: RedStamp
   m_TagString: Untagged
@@ -3757,6 +3816,23 @@ MonoBehaviour:
   glideTime: 0.15
   inkMaterial: {fileID: 2100000, guid: 74aa9c06a7f5a6244a1f4a95f83bd9b9, type: 2}
   inkUses: 5
+--- !u!114 &1570168913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570168910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7f2a90f419eb524aaf65d2903fad214, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grabbable
+  zone: {fileID: 169882614}
+  gripPoint: {fileID: 0}
+  hoverHeight: 0.05
+  followTime: 0.08
+  returnTime: 0.15
 --- !u!1 &1639190976
 GameObject:
   m_ObjectHideFlags: 0
@@ -4224,6 +4300,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1973942885}
   - component: {fileID: 1973942886}
+  - component: {fileID: 1973942887}
   m_Layer: 0
   m_Name: GreenStamp
   m_TagString: Untagged
@@ -4263,6 +4340,23 @@ MonoBehaviour:
   glideTime: 0.15
   inkMaterial: {fileID: 2100000, guid: 69c654abc76ae5a4a864a632eec2d7ed, type: 2}
   inkUses: 5
+--- !u!114 &1973942887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973942884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7f2a90f419eb524aaf65d2903fad214, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grabbable
+  zone: {fileID: 169882614}
+  gripPoint: {fileID: 0}
+  hoverHeight: 0.05
+  followTime: 0.08
+  returnTime: 0.15
 --- !u!1 &2022803488
 GameObject:
   m_ObjectHideFlags: 0

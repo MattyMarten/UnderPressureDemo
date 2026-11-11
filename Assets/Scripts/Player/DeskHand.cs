@@ -1,50 +1,79 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-// His right arm in the fixed state. The mouse moves his wrist around inside a flat area on the desk.
-// Only the Wrist is kept inside the area. His hand is its child, so it follows it,
-// and the hand (with the stamp it holds) can reach a little past the area.
-// ArmPose builds the forearm and upper arm from the wrist's position.
-// While Shift is held he looks around instead, and the wrist stays where it is.
-// While a stamp is pressed (StampPress), the wrist can't move sideways and is pushed down.
+// His right hand. It no longer follows the mouse: it follows what he holds.
+// Picking up: the hand reaches for the object. When it gets there, it tells the object (HandArrived),
+// and from then on the hand moves exactly with it, so its Grip always sits on the object's grip point.
+// Nothing held: the hand slowly goes back to where it rests (where the Wrist is placed in the editor).
+// Only the Wrist is moved; the Hand is its child. ArmPose and the real arm (IK) follow it.
+// The yellow area is how far the wrist can go, which is his reach for now.
+// (Step 5 adds leaning forward when the object goes further than that.)
 // Put it on the HandArea object, which lies on the desk surface. The Wrist is its child.
+
+// Runs after the normal scripts (they are 0, this is 100), so the held object
+// has already moved this frame when the hand follows it. Otherwise the hand would lag one frame behind.
+[DefaultExecutionOrder(100)]
 public class DeskHand : MonoBehaviour
 {
-    public SeatedLook look;            // to know when he is looking around (Shift)
-    public StampPress press;           // to know when a stamp is pressed down, and how far
+    public Grabber grabber;            // to know what he holds (on Main Camera)
     public Transform wrist;            // the Wrist child: the point that moves
+    public Transform grip;             // the Grip under the Hand: the point that sits on the object's grip point
 
-    public Vector2 areaSize = new Vector2(1.2f, 0.6f);   // width (left-right) and depth (near-far), in meters
-    public float hoverHeight = 0.15f;  // how high above the desk his wrist floats
-    public float sensitivity = 0.001f; // meters per pixel of mouse movement
-    public bool canMove = true;        // later: off until his right hand is freed at the end of the intro
+    public Vector2 areaSize = new Vector2(1.2f, 0.6f);   // how far the wrist can go: width and depth, in meters
+    public float reachTime = 0.15f;    // about how many seconds the hand takes to reach an object
+    public float returnTime = 0.5f;    // about how many seconds it takes to go back to rest (slower)
+    public bool canMove = true;        // later: off until his right hand is freed
 
-    InputAction moveAction;
-    Vector2 offset;   // where the wrist is, from the middle of the area: x = right, y = away from him
+    Vector3 restPosition;   // the Wrist's position as placed in the editor, measured inside HandArea
+    Vector3 velocity;       // SmoothDamp keeps its current speed here between frames
 
     void Start()
     {
-        // The same mouse movement that SeatedLook uses. Only one of them uses it at a time.
-        moveAction = InputSystem.actions.FindAction("Player/Look");
+        restPosition = wrist.localPosition;
     }
 
     void Update()
     {
-        if (canMove && !look.IsLookingAround && !press.IsPressing)
-        {
-            Vector2 delta = moveAction.ReadValue<Vector2>();   // how far the mouse moved this frame
-            offset += delta * sensitivity;                      // mouse up → wrist moves away from him
+        Grabbable held = grabber.Held;
 
-            // Keep the wrist inside the area
-            float halfWidth = areaSize.x / 2f;
-            float halfDepth = areaSize.y / 2f;
-            offset.x = Mathf.Clamp(offset.x, -halfWidth, halfWidth);
-            offset.y = Mathf.Clamp(offset.y, -halfDepth, halfDepth);
+        // Nothing held (or the hand can't move): back to rest, slowly
+        if (!canMove || held == null)
+        {
+            wrist.localPosition = Vector3.SmoothDamp(wrist.localPosition, restPosition, ref velocity, returnTime);
+            return;
         }
 
-        // Local position: measured from HandArea, along HandArea's own axes.
-        // press.Depth is 0 except while stamping: then the wrist goes down so the stamp touches.
-        wrist.localPosition = new Vector3(offset.x, hoverHeight - press.Depth, offset.y);
+        Vector3 target = WristTargetFor(held);
+
+        if (held.InHand)
+        {
+            // Holding it: exactly with the object, no smoothing, so they never drift apart
+            wrist.localPosition = target;
+            velocity = Vector3.zero;
+        }
+        else
+        {
+            // Still reaching for it
+            wrist.localPosition = Vector3.SmoothDamp(wrist.localPosition, target, ref velocity, reachTime);
+
+            // Close enough (1 cm): the hand has it
+            if (Vector3.Distance(wrist.localPosition, target) < 0.01f)
+                held.HandArrived();
+        }
+    }
+
+    // Where the Wrist must be so that the Grip lands on the object's grip point.
+    // The Grip is always the same distance from the Wrist (the hand doesn't turn),
+    // so: wrist = grip point - (grip - wrist).
+    Vector3 WristTargetFor(Grabbable held)
+    {
+        Vector3 gripFromWrist = grip.position - wrist.position;
+        Vector3 wristInWorld = held.GripPoint.position - gripFromWrist;
+
+        // Into HandArea's own space, and kept inside the area (his reach)
+        Vector3 local = transform.InverseTransformPoint(wristInWorld);
+        local.x = Mathf.Clamp(local.x, -areaSize.x / 2f, areaSize.x / 2f);
+        local.z = Mathf.Clamp(local.z, -areaSize.y / 2f, areaSize.y / 2f);
+        return local;
     }
 
     // Draws the area as a yellow box on the desk in the Scene view (not in the game),
