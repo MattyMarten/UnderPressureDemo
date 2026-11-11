@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 // Put it on the camera, which sits at his eyes.
 public class SeatedLook : MonoBehaviour
 {
-    public float sensitivity = 0.1f;    // degrees per pixel of mouse movement while looking around
+    public float sensitivity = 0.1f;    // degrees per pixel of mouse movement while looking around, not zoomed
     public float maxLeftRight = 70f;    // how far he can turn his head to each side
     public float maxUp = 30f;           // how far he can look up
     public float maxDown = 50f;         // how far he can look down (further, to see the desk)
@@ -24,7 +24,6 @@ public class SeatedLook : MonoBehaviour
     public float smoothTime = 0.25f;    // about how many seconds the camera takes to catch up
 
     // True while no mouse button is held. DeskHand reads it, so the hand stays still meanwhile.
-    // CameraZoom reads it too: he can only zoom while looking around.
     public bool IsLookingAround { get; private set; }
 
     InputAction lookAction;
@@ -36,6 +35,8 @@ public class SeatedLook : MonoBehaviour
     float pitch;         // how far he has looked up (-) or down (+) from the main view
     float yawSpeed;      // SmoothDamp keeps its current speed in these between frames
     float pitchSpeed;
+    Camera cam;              // the camera on this object, to know how far CameraZoom has zoomed
+    float normalFieldOfView; // its Field of View when the scene starts (not zoomed)
 
     void Start()
     {
@@ -46,6 +47,10 @@ public class SeatedLook : MonoBehaviour
         rightHandAction = InputSystem.actions.FindAction("Player/RightHand");
         if (grabAction == null || rightHandAction == null)
             Debug.LogError("SeatedLook: the Player map needs the actions \"Grab\" (left mouse) and \"RightHand\" (right mouse). Add them in InputSystem_Actions.");
+
+        // The Field of View you set in the Inspector is "not zoomed"
+        cam = GetComponent<Camera>();
+        normalFieldOfView = cam.fieldOfView;
 
         // The rotation you set in the Inspector is the main view
         Vector3 start = transform.localEulerAngles;
@@ -79,8 +84,13 @@ public class SeatedLook : MonoBehaviour
     {
         Vector2 delta = lookAction.ReadValue<Vector2>();   // how far the mouse moved this frame
 
-        yaw += delta.x * sensitivity;
-        pitch -= delta.y * sensitivity;   // mouse up means look up, which is a smaller x angle
+        // Zoomed in, the same mouse movement should turn the head less, or the view jumps.
+        // Not zoomed: 60 / 60 = 1. Fully zoomed: 30 / 60 = 0.5, so half as fast.
+        float zoomScale = cam.fieldOfView / normalFieldOfView;
+        float degreesPerPixel = sensitivity * zoomScale;
+
+        yaw += delta.x * degreesPerPixel;
+        pitch -= delta.y * degreesPerPixel;   // mouse up means look up, which is a smaller x angle
 
         yaw = Mathf.Clamp(yaw, -maxLeftRight, maxLeftRight);
         pitch = Mathf.Clamp(pitch, -maxUp, maxDown);

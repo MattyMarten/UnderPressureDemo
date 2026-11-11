@@ -70,7 +70,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Breath",
+                    "name": "Breathe",
                     "type": "Button",
                     "id": "b9f365dd-ee2d-4a11-83e4-b03835970e8f",
                     "expectedControlType": "",
@@ -222,7 +222,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Breath",
+                    "action": "Breathe",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
