@@ -4,11 +4,11 @@ using UnityEngine.InputSystem;
 // Turns Johnny's head. He stays in his chair the whole game,
 // so this only rotates the camera; it never moves it.
 // Two states:
-//   No hand button held (left or right mouse): he looks around.
+//   No mouse button held: he looks around.
 //     The mouse turns his head freely, inside the limits.
-//   A hand button held: the mouse moves a hand instead. The camera looks at the room's
-//     main view and turns a little towards "follow" (his wrist), softly.
-// (Rework step 2 changes the second state: no pull back to the main view, follow the active hand.)
+//   Left mouse (Grab) or right mouse (RightHand) held: the mouse moves his hand instead.
+//     The camera looks at the room's main view and turns a little towards "follow" (his wrist), softly.
+// (Build step 2 changes this: free look all the time, and the held object follows the gaze.)
 // Put it on the camera, which sits at his eyes.
 public class SeatedLook : MonoBehaviour
 {
@@ -23,12 +23,12 @@ public class SeatedLook : MonoBehaviour
     public float followAmount = 0.3f;   // 0 = never turns to it, 1 = looks straight at it
     public float smoothTime = 0.25f;    // about how many seconds the camera takes to catch up
 
-    // True while no hand button is held. DeskHand reads it, so the hand stays still meanwhile.
+    // True while no mouse button is held. DeskHand reads it, so the hand stays still meanwhile.
     // CameraZoom reads it too: he can only zoom while looking around.
     public bool IsLookingAround { get; private set; }
 
     InputAction lookAction;
-    InputAction leftHandAction;
+    InputAction grabAction;
     InputAction rightHandAction;
     float startYaw;      // the main view: the camera's direction when the scene starts
     float startPitch;
@@ -41,11 +41,11 @@ public class SeatedLook : MonoBehaviour
     {
         // "Look" in the Player map of InputSystem_Actions: mouse movement (or the right stick)
         lookAction = InputSystem.actions.FindAction("Player/Look");
-        // "LeftHand" and "RightHand": holding the left or the right mouse button
-        leftHandAction = InputSystem.actions.FindAction("Player/LeftHand");
+        // "Grab" (left mouse) and "RightHand" (right mouse): holding a mouse button
+        grabAction = InputSystem.actions.FindAction("Player/Grab");
         rightHandAction = InputSystem.actions.FindAction("Player/RightHand");
-        if (leftHandAction == null || rightHandAction == null)
-            Debug.LogError("SeatedLook: the Player map needs the actions \"LeftHand\" (left mouse) and \"RightHand\" (right mouse). Add them in InputSystem_Actions.");
+        if (grabAction == null || rightHandAction == null)
+            Debug.LogError("SeatedLook: the Player map needs the actions \"Grab\" (left mouse) and \"RightHand\" (right mouse). Add them in InputSystem_Actions.");
 
         // The rotation you set in the Inspector is the main view
         Vector3 start = transform.localEulerAngles;
@@ -61,9 +61,9 @@ public class SeatedLook : MonoBehaviour
         if (!canLook)
             return;
 
-        // Looking around = neither hand button is held.
+        // Looking around = neither mouse button is held.
         // "?." means: if the action is missing (null), don't ask it, the answer is just false.
-        bool handButtonHeld = leftHandAction?.IsPressed() == true || rightHandAction?.IsPressed() == true;
+        bool handButtonHeld = grabAction?.IsPressed() == true || rightHandAction?.IsPressed() == true;
         IsLookingAround = !handButtonHeld;
 
         if (IsLookingAround)

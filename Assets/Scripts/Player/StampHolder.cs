@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Lets his right hand hold a stamp. While D (GripRight) is held, the stamp under the hand
-// glides into the hand. When D is let go, it glides back to its own spot.
-// The grip works even when no mouse button is held, so he can keep holding while he looks around.
-// (Rework step 4 makes this one per hand: A for the left hand, D for the right.)
+// Lets his right hand hold a stamp. While left mouse (Grab) is held, the hand moves,
+// and as soon as it is close to a stamp, that stamp glides into the hand.
+// When left mouse is let go, the stamp glides back to its own spot.
+// (Temporary. Build step 4 replaces this script with Grabbable:
+//  look at an object and hold left mouse to pick it up.)
 // Put it on HandArea, next to DeskHand.
 public class StampHolder : MonoBehaviour
 {
@@ -17,23 +18,25 @@ public class StampHolder : MonoBehaviour
     // The stamp in his hand now, or null. Stamping (a later step) will read it.
     public Stamp Held { get; private set; }
 
-    InputAction gripAction;
+    InputAction grabAction;
 
     void Start()
     {
-        // "GripRight" in the Player map of InputSystem_Actions: D
-        gripAction = InputSystem.actions.FindAction("Player/GripRight");
-        if (gripAction == null)
-            Debug.LogError("StampHolder: there is no action \"GripRight\" in the Player map. Add it in InputSystem_Actions, bound to D.");
+        // "Grab" in the Player map of InputSystem_Actions: left mouse
+        grabAction = InputSystem.actions.FindAction("Player/Grab");
+        if (grabAction == null)
+            Debug.LogError("StampHolder: there is no action \"Grab\" in the Player map. Add it in InputSystem_Actions, bound to left mouse.");
     }
 
     void Update()
     {
-        if (gripAction == null)
+        if (grabAction == null)
             return;
 
-        // D was just pressed and the hand is empty
-        if (Held == null && gripAction.WasPressedThisFrame())
+        // Left mouse is held and the hand is empty: grab a stamp as soon as one is within reach.
+        // (IsPressed, not WasPressedThisFrame: the hand only moves while the button is held,
+        //  so it reaches the stamp after the press, not at the moment of it.)
+        if (Held == null && grabAction.IsPressed())
         {
             Stamp nearest = FindNearest();
             if (nearest != null)
@@ -43,9 +46,9 @@ public class StampHolder : MonoBehaviour
             }
         }
 
-        // D is not held any more: the stamp goes home.
+        // Left mouse is not held any more: the stamp goes home.
         // But not while it is pressed down: then it goes home after Space is let go.
-        if (Held != null && !gripAction.IsPressed() && !press.IsPressing)
+        if (Held != null && !grabAction.IsPressed() && !press.IsPressing)
         {
             Held.GoHome();
             Held = null;

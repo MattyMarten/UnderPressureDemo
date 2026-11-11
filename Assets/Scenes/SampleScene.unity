@@ -2684,7 +2684,6 @@ GameObject:
   - component: {fileID: 1346953496}
   - component: {fileID: 1346953497}
   - component: {fileID: 1346953498}
-  - component: {fileID: 1346953499}
   - component: {fileID: 1346953500}
   m_Layer: 0
   m_Name: HandArea
@@ -2770,24 +2769,6 @@ MonoBehaviour:
   forwardFollow: 0.7
   sideFollow: 0
   thickness: 0.06
---- !u!114 &1346953499
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1346953494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee3e436cf67e15843be41f8dd885679c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HandTurn
-  press: {fileID: 1346953500}
-  hand: {fileID: 1533652018}
-  maxLeft: 80
-  maxRight: 20
-  turnSpeed: 120
-  canTurn: 1
 --- !u!114 &1346953500
 MonoBehaviour:
   m_ObjectHideFlags: 0
