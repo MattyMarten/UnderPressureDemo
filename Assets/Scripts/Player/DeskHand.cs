@@ -7,8 +7,9 @@ using UnityEngine;
 // the hand stops and the object stays in it.
 // Nothing held: the hand slowly goes back to where it rests (where the Wrist is placed in the editor).
 // Only the Wrist is moved; the Hand is its child. ArmPose and the real arm (IK) follow it.
+// While a stamp is pressed (StampPress), the hand goes straight down by the press depth,
+// and the stamp in it goes down with it.
 // The yellow area is how far the wrist can go, which is his reach for now.
-// (Step 5 adds leaning forward when the object goes further than that.)
 // Put it on the HandArea object, which lies on the desk surface. The Wrist is its child.
 
 // Runs after the normal scripts (they are 0, this is 100), so the held object
@@ -20,6 +21,7 @@ public class DeskHand : MonoBehaviour
     public Transform wrist;            // the Wrist child: the point that moves
     public Transform grip;             // the Grip under the Hand: the point that goes to the object's grip point
     public Transform realGrip;         // an empty child of Johnny's real hand bone, in his palm: where objects sit
+    public StampPress press;           // to know how far down a pressed stamp goes (on HandArea)
 
     public Vector2 areaSize = new Vector2(1.2f, 0.6f);   // how far the wrist can go: width and depth, in meters
     public float reachTime = 0.15f;    // about how many seconds the hand takes to reach an object
@@ -47,8 +49,11 @@ public class DeskHand : MonoBehaviour
 
         if (held.InHand)
         {
-            // Holding it: straight to where the object wants to be (it is already smoothed there)
-            wrist.localPosition = WristTargetFor(held.WantedGripPosition);
+            // Holding it: straight to where the object wants to be (it is already smoothed there),
+            // and down by the press depth (0 when nothing is pressed).
+            // Vector3.down, the same direction StampPress looks for the paper.
+            float depth = press != null ? press.Depth : 0f;
+            wrist.localPosition = WristTargetFor(held.WantedGripPosition + Vector3.down * depth);
             velocity = Vector3.zero;
         }
         else

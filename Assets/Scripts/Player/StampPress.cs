@@ -5,23 +5,23 @@ using UnityEngine.InputSystem;
 // Presses the stamp in his hand down with Space (the "Use" action).
 // Space pushes it down onto whatever is under it (a paper or the desk) and leaves an ink mark there.
 // It stays down while Space is held and comes back up when Space is let go.
-// While it is pressing, the hand can't move or turn, and the stamp can't be let go.
-// It works even when no mouse button is held, so he can look at the paper and still stamp.
+// It only works when he holds a stamp (a Grabbable that also has a Stamp) and the hand has reached it.
+// While it is pressing, the stamp is locked: it can't move with his gaze and can't be let go.
+// DeskHand lowers the hand by Depth, so the stamp in it really goes down.
 // It doesn't decide answers: the paper will read its stamp in a later step.
 // Put it on HandArea, next to DeskHand.
 public class StampPress : MonoBehaviour
 {
-    public StampHolder holder;         // to know which stamp is in his hand
+    public Grabber grabber;            // to know what is in his hand (on Main Camera)
     public InkMark inkMarkPrefab;      // the InkMark prefab from Assets/Prefabs
     public Transform deskMarks;        // marks that don't land on a paper become children of this (OfficeSet)
     public float pressTime = 0.08f;    // seconds to go down, and again to come up
     public float maxReach = 0.3f;      // how far below the stamp it looks for something to stamp, in meters
 
     // True from the moment the press starts until the stamp is back up.
-    // DeskHand, HandTurn and StampHolder read it.
     public bool IsPressing { get; private set; }
 
-    // How far down the wrist is pushed now, in meters. DeskHand reads it.
+    // How far down the stamp is pushed now, in meters. DeskHand reads it and lowers the hand.
     public float Depth { get; private set; }
 
     InputAction useAction;
@@ -43,17 +43,33 @@ public class StampPress : MonoBehaviour
         // Space was just pressed and he isn't already pressing
         if (useAction.WasPressedThisFrame() && !IsPressing)
         {
-            Stamp stamp = holder.Held;
-
-            // Only a stamp that has arrived in his hand. A gliding one isn't attached yet.
-            if (stamp != null && !stamp.IsGliding)
+            Stamp stamp = HeldStamp();
+            if (stamp != null)
                 StartCoroutine(Press(stamp));
         }
+    }
+
+    // The stamp in his hand, or null.
+    // Null when he holds nothing, when the hand hasn't reached the object yet,
+    // or when the held object isn't a stamp (later: the rope).
+    Stamp HeldStamp()
+    {
+        Grabbable held = grabber.Held;
+        if (held == null || !held.InHand)
+            return null;
+
+        // GetComponent looks for a Stamp on the same object as the Grabbable.
+        // It gives back null if there isn't one.
+        return held.GetComponent<Stamp>();
     }
 
     IEnumerator Press(Stamp stamp)
     {
         IsPressing = true;
+
+        // Lock it: it stays still and stays in his hand until it is back up
+        Grabbable grabbable = stamp.GetComponent<Grabbable>();
+        grabbable.Locked = true;
 
         // What is under the stamp, and how far down it is
         RaycastHit hit;
@@ -89,6 +105,8 @@ public class StampPress : MonoBehaviour
         }
         Depth = 0f;
 
+        // Back up: it may move again, and if left mouse is already up, the Grabber lets it go now
+        grabbable.Locked = false;
         IsPressing = false;
     }
 
@@ -106,7 +124,7 @@ public class StampPress : MonoBehaviour
         {
             Transform thing = hit.collider.transform;
             if (thing.IsChildOf(stamp.transform) || thing.IsChildOf(transform))
-                continue;   // its own Base, or a part of his arm: look further down
+                continue;   // its own Base, or a part of the grey-box arm: look further down
 
             surface = hit;
             return true;

@@ -3259,7 +3259,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1346953495}
   - component: {fileID: 1346953496}
-  - component: {fileID: 1346953497}
   - component: {fileID: 1346953498}
   - component: {fileID: 1346953500}
   m_Layer: 0
@@ -3305,28 +3304,11 @@ MonoBehaviour:
   wrist: {fileID: 1067515711}
   grip: {fileID: 739892496}
   realGrip: {fileID: 80679369}
+  press: {fileID: 1346953500}
   areaSize: {x: 0.75, y: 0.57}
   reachTime: 0.15
   returnTime: 0.5
   canMove: 1
---- !u!114 &1346953497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1346953494}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4812af07a14c3cc42943186005de5361, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StampHolder
-  press: {fileID: 1346953500}
-  grip: {fileID: 739892496}
-  stamps:
-  - {fileID: 1973942886}
-  - {fileID: 1570168912}
-  reach: 0.1
 --- !u!114 &1346953498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3359,7 +3341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da282a74c3ad0d54fb93440f6098c4d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StampPress
-  holder: {fileID: 1346953497}
+  grabber: {fileID: 330585550}
   inkMarkPrefab: {fileID: 319782236658964363, guid: f31f3f326bdc19147b0e040582d8bc5b, type: 3}
   deskMarks: {fileID: 1132714604}
   pressTime: 0.08
@@ -3913,7 +3895,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 839397d9e7980fc49b3d2411e7cef0f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stamp
-  glideTime: 0.15
   inkMaterial: {fileID: 2100000, guid: 74aa9c06a7f5a6244a1f4a95f83bd9b9, type: 2}
   inkUses: 5
 --- !u!114 &1570168913
@@ -4494,7 +4475,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 839397d9e7980fc49b3d2411e7cef0f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stamp
-  glideTime: 0.15
   inkMaterial: {fileID: 2100000, guid: 69c654abc76ae5a4a864a632eec2d7ed, type: 2}
   inkUses: 5
 --- !u!114 &1973942887

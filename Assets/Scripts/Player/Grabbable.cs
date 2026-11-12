@@ -10,6 +10,8 @@ using UnityEngine;
 // From then on it sits in Johnny's real hand: its grip point is put on the hand's RealGrip every frame.
 // His gaze only decides where the hand *tries* to go (the wanted point). If his arm can't reach that far,
 // the object stays in his hand anyway, so it can never leave the hand.
+// Another script can lock it (StampPress does, while the stamp is pressed down):
+// then it stops following his gaze and can't be let go until it is unlocked.
 // Put it on each object that can be held (GreenStamp, RedStamp). It needs a collider on it or on a child.
 public class Grabbable : MonoBehaviour
 {
@@ -22,6 +24,10 @@ public class Grabbable : MonoBehaviour
     public bool IsHeld { get; private set; }
     public bool IsHome { get; private set; } = true;   // standing still on its own spot
     public bool InHand { get; private set; }           // held, and the hand has reached it
+
+    // While true: it stays where it is (doesn't follow his gaze) and the Grabber won't let it go.
+    // Set by the script that uses the object (StampPress while pressing). Anyone may set it, so "set" is public.
+    public bool Locked { get; set; }
 
     // Where the hand should try to put the grip point now. DeskHand reads it while the object is in the hand.
     // (The grip point is always the same distance from the object's own position, because it never turns.)
@@ -77,6 +83,7 @@ public class Grabbable : MonoBehaviour
     {
         IsHeld = false;
         InHand = false;
+        Locked = false;   // to be safe: a let-go object is never locked
         holdingGrip = null;
         velocity = Vector3.zero;   // glide home from rest, not with the hand's old speed
     }
@@ -86,6 +93,12 @@ public class Grabbable : MonoBehaviour
         if (IsHeld && !InHand)
         {
             // Picked up, but the hand isn't there yet: stay put and wait for it
+        }
+        else if (IsHeld && Locked)
+        {
+            // In the hand but locked (pressed down): the wanted point stays where it is.
+            // velocity = zero, so when it is unlocked it starts following again from rest, without a jump.
+            velocity = Vector3.zero;
         }
         else if (IsHeld)
         {

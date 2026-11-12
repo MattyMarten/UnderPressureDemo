@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 // Johnny's "picking up", from his point of view.
 // Look at an object (the middle of the screen) and press left mouse (Grab): if it has a Grabbable, it is picked up.
 // While left mouse is held, it is told every frame where he is looking.
-// Let go of left mouse: it is let go.
+// Let go of left mouse: it is let go (but not while it is Locked: then as soon as it is unlocked).
 // How the object moves is decided by the object itself (Grabbable), not here.
 // Put it on the camera.
 public class Grabber : MonoBehaviour
@@ -53,11 +53,13 @@ public class Grabber : MonoBehaviour
         {
             if (grabAction.IsPressed())
                 Held.Follow(gaze);   // still holding: tell it where he looks
-            else
+            else if (!Held.Locked)
             {
                 Held.Release();      // let go
                 Held = null;
             }
+            // else: left mouse is up, but the object is locked (a stamp pressed down).
+            // Keep holding it. The first frame after it is unlocked, this lets it go.
         }
     }
 }
