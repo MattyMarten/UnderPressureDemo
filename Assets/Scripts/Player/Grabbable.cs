@@ -6,8 +6,10 @@ using UnityEngine;
 // While held, it floats a little above the desk, where his gaze hits the desk, inside its zone.
 // When let go, it glides back to the spot where it stood when the scene started.
 // It always keeps its own rotation, so a stamp always stays straight.
-// When picked up it first waits for his hand to reach it (DeskHand calls HandArrived),
-// then it starts following his gaze, and the hand moves with it.
+// When picked up it first waits for his hand to reach it (DeskHand calls HandArrived).
+// From then on it sits in Johnny's real hand: its grip point is put on the hand's RealGrip every frame.
+// His gaze only decides where the hand *tries* to go (the wanted point). If his arm can't reach that far,
+// the object stays in his hand anyway, so it can never leave the hand.
 // Put it on each object that can be held (GreenStamp, RedStamp). It needs a collider on it or on a child.
 public class Grabbable : MonoBehaviour
 {
@@ -21,12 +23,18 @@ public class Grabbable : MonoBehaviour
     public bool IsHome { get; private set; } = true;   // standing still on its own spot
     public bool InHand { get; private set; }           // held, and the hand has reached it
 
+    // Where the hand should try to put the grip point now. DeskHand reads it while the object is in the hand.
+    // (The grip point is always the same distance from the object's own position, because it never turns.)
+    public Vector3 WantedGripPosition => wanted + (GripPoint.position - transform.position);
+
     // The point the hand goes to: gripPoint if one is set, otherwise the object itself
     public Transform GripPoint => gripPoint != null ? gripPoint : transform;
 
     Vector3 homePosition;   // where it stood when the scene started
-    Vector3 target;         // where it moves to while held
+    Vector3 target;         // where his gaze says it should be (inside the zone, above the desk)
+    Vector3 wanted;         // follows target smoothly: where the hand tries to bring it
     Vector3 velocity;       // SmoothDamp keeps its current speed here between frames
+    Transform holdingGrip;  // the RealGrip on Johnny's hand while it is in the hand, else null
 
     void Awake()
     {
@@ -42,10 +50,13 @@ public class Grabbable : MonoBehaviour
         target = transform.position;   // until the first Follow, stay where it is
     }
 
-    // DeskHand calls this when the hand has reached it
-    public void HandArrived()
+    // DeskHand calls this when the hand has reached it, with the point in the real hand that holds it
+    public void HandArrived(Transform grip)
     {
         InHand = true;
+        holdingGrip = grip;
+        wanted = transform.position;   // the hand starts from where the object is now
+        velocity = Vector3.zero;
     }
 
     // The Grabber calls this every frame while it is held, with the line he is looking along
@@ -66,6 +77,8 @@ public class Grabbable : MonoBehaviour
     {
         IsHeld = false;
         InHand = false;
+        holdingGrip = null;
+        velocity = Vector3.zero;   // glide home from rest, not with the hand's old speed
     }
 
     void Update()
@@ -76,8 +89,9 @@ public class Grabbable : MonoBehaviour
         }
         else if (IsHeld)
         {
-            // Smoothly towards where he looks: fast when far away, slower when close
-            transform.position = Vector3.SmoothDamp(transform.position, target, ref velocity, followTime);
+            // In the hand: only the wanted point moves, smoothly towards where he looks.
+            // The object itself is moved in LateUpdate, onto the hand.
+            wanted = Vector3.SmoothDamp(wanted, target, ref velocity, followTime);
         }
         else if (!IsHome)
         {
@@ -92,5 +106,13 @@ public class Grabbable : MonoBehaviour
                 IsHome = true;
             }
         }
+    }
+
+    // LateUpdate runs after the animation and the IK, so the real hand is in its final place for this frame.
+    // Move the object so its grip point sits exactly on the hand's RealGrip.
+    void LateUpdate()
+    {
+        if (InHand && holdingGrip != null)
+            transform.position += holdingGrip.position - GripPoint.position;
     }
 }
