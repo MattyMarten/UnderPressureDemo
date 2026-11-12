@@ -8,7 +8,8 @@ using UnityEngine.InputSystem;
 // It only works when he holds a stamp (a Grabbable that also has a Stamp) and the hand has reached it.
 // While it is pressing, the stamp is locked: it can't move with his gaze and can't be let go.
 // DeskHand lowers the hand by Depth, so the stamp in it really goes down.
-// It doesn't decide answers: the paper will read its stamp in a later step.
+// When a mark lands on a paper, the paper is told, and the paper decides if it counts (Paper.ReadStamp).
+// A dry stamp leaves no mark, so the paper is never told: it doesn't count.
 // Put it on HandArea, next to DeskHand.
 public class StampPress : MonoBehaviour
 {
@@ -159,5 +160,9 @@ public class StampPress : MonoBehaviour
         InkMark mark = Instantiate(inkMarkPrefab, position, rotation, parent);
         mark.Setup(stamp.inkMaterial, strength, marksMade);
         marksMade++;
+
+        // On a paper: let the paper check how much of the face is inside its box
+        if (paper != null)
+            paper.ReadStamp(position, rotation, stamp);
     }
 }

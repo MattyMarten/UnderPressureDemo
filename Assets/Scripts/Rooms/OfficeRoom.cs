@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // The office room. It puts papers on the desk and will wait for stamps.
+// It also knows the stamp rules that need all papers at once (green only once).
 // It also has her special reactions.
 public class OfficeRoom : RoomBase
 {
@@ -32,9 +33,21 @@ public class OfficeRoom : RoomBase
             Paper paper = Instantiate(paperPrefab, position, paperCenter.rotation, paperCenter);
 
             string words = single ? question.text : question.options[i].text;
-            paper.Setup(i, words);
+            paper.Setup(i, words, this);   // "this" = this room, so the paper can ask it questions
             papers.Add(paper);
         }
+    }
+
+    // True if green already counts on one of the papers on the desk now.
+    // A paper asks this before it lets green count, because green counts only once per question.
+    public bool GreenUsed()
+    {
+        foreach (Paper paper in papers)
+        {
+            if (paper.HasStamp && paper.StampColor == InkColor.Green)
+                return true;
+        }
+        return false;
     }
 
     public override IEnumerator AskQuestion(QuestionData question)

@@ -983,7 +983,7 @@ Transform:
   m_GameObject: {fileID: 169882612}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.204, y: 0.75, z: 0.55}
+  m_LocalPosition: {x: 0.204, y: 0.75, z: 0.517}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1001,7 +1001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5ad9e2b7eae4a49b757a2e2d25b290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrabZone
-  size: {x: 0.74, y: 0.56}
+  size: {x: 0.74, y: 0.59}
 --- !u!1 &237593077
 GameObject:
   m_ObjectHideFlags: 0
@@ -3277,7 +3277,7 @@ Transform:
   m_GameObject: {fileID: 1346953494}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.204, y: 0.75, z: 0.55}
+  m_LocalPosition: {x: 0.204, y: 0.75, z: 0.518}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3305,7 +3305,7 @@ MonoBehaviour:
   grip: {fileID: 739892496}
   realGrip: {fileID: 80679369}
   press: {fileID: 1346953500}
-  areaSize: {x: 0.75, y: 0.57}
+  areaSize: {x: 0.75, y: 0.6}
   reachTime: 0.15
   returnTime: 0.5
   canMove: 1
@@ -3485,7 +3485,7 @@ Transform:
   m_GameObject: {fileID: 1496664969}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0206, z: 0.0225}
+  m_LocalPosition: {x: -0.152, y: 0.0206, z: 0.128}
   m_LocalScale: {x: 0.08, y: 0.025, z: 0.09}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3731,7 +3731,7 @@ Transform:
   m_GameObject: {fileID: 1533652017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0012, z: 0}
+  m_LocalPosition: {x: -0.125, y: 0.0012, z: 0.055}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3874,7 +3874,7 @@ Transform:
   m_GameObject: {fileID: 1570168910}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.098, y: 0.75, z: 0.3}
+  m_LocalPosition: {x: 0.526, y: 0.75, z: 0.356}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3895,8 +3895,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 839397d9e7980fc49b3d2411e7cef0f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stamp
+  ink: 1
   inkMaterial: {fileID: 2100000, guid: 74aa9c06a7f5a6244a1f4a95f83bd9b9, type: 2}
   inkUses: 5
+  faceSize: {x: 0.07, y: 0.05}
 --- !u!114 &1570168913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4454,7 +4456,7 @@ Transform:
   m_GameObject: {fileID: 1973942884}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.041, y: 0.75, z: 0.3}
+  m_LocalPosition: {x: 0.527, y: 0.75, z: 0.44880003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4475,8 +4477,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 839397d9e7980fc49b3d2411e7cef0f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stamp
+  ink: 0
   inkMaterial: {fileID: 2100000, guid: 69c654abc76ae5a4a864a632eec2d7ed, type: 2}
   inkUses: 5
+  faceSize: {x: 0.07, y: 0.05}
 --- !u!114 &1973942887
 MonoBehaviour:
   m_ObjectHideFlags: 0
