@@ -2477,6 +2477,7 @@ GameObject:
   - component: {fileID: 1023874552}
   - component: {fileID: 1023874551}
   - component: {fileID: 1023874554}
+  - component: {fileID: 1023874555}
   m_Layer: 0
   m_Name: Office
   m_TagString: Untagged
@@ -2499,6 +2500,7 @@ MonoBehaviour:
   paperPrefab: {fileID: 5378288502357853474, guid: 207bfd5763022664d9f5bb4f4e0473e0, type: 3}
   paperCenter: {fileID: 90897755}
   paperSpacing: 0.24
+  press: {fileID: 1346953500}
 --- !u!114 &1023874552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2571,6 +2573,22 @@ MonoBehaviour:
   - from: 1
     to: 0
     afterQuestions: 2
+--- !u!114 &1023874555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023874550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 480b16c6489659245a9155aced9fb8a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OfficeRoom
+  paperPrefab: {fileID: 5378288502357853474, guid: 207bfd5763022664d9f5bb4f4e0473e0, type: 3}
+  paperCenter: {fileID: 90897755}
+  paperSpacing: 0.24
+  press: {fileID: 1346953500}
 --- !u!1 &1027208891
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// The office room. It puts papers on the desk and will wait for stamps.
+// The office room. It puts papers on the desk and waits until every paper has a stamp.
 // It also knows the stamp rules that need all papers at once (green only once).
 // It also has her special reactions.
 public class OfficeRoom : RoomBase
@@ -10,6 +10,7 @@ public class OfficeRoom : RoomBase
     public Paper paperPrefab;            // the Paper prefab from Assets/Prefabs
     public Transform paperCenter;        // the middle of the row of papers, on the desk
     public float paperSpacing = 0.24f;   // meters from the middle of one paper to the next
+    public StampPress press;             // the answer is final only when the stamp is back up (on HandArea)
 
     // The papers on the desk now
     protected List<Paper> papers = new List<Paper>();
@@ -50,13 +51,38 @@ public class OfficeRoom : RoomBase
         return false;
     }
 
+    // Waits until every paper has a stamp that counts, and the stamp has come back up.
+    // Then the answer is final: the paper with green on it, or "none" if no paper has green.
+    // (A single paper: green = accept = option 0, red = decline = none.)
     public override IEnumerator AskQuestion(QuestionData question)
     {
-        // Stamping comes in a later step. Until then nobody can answer here,
-        // so we wait for ever instead of giving a wrong answer.
-        Debug.LogWarning("OfficeRoom: stamping isn't built yet. Use KeyboardTestRoom to answer.");
-        while (true)
-            yield return null;
+        // "||" = or: keep waiting while a paper is still missing its stamp, OR the stamp is still down
+        while (!AllPapersStamped() || press.IsPressing)
+            yield return null;   // check again next frame
+
+        ChosenOption = GreenOption();
+    }
+
+    // True when every paper on the desk has a stamp that counts
+    bool AllPapersStamped()
+    {
+        foreach (Paper paper in papers)
+        {
+            if (!paper.HasStamp)
+                return false;   // one is enough to say no
+        }
+        return true;
+    }
+
+    // The option of the paper with green on it, or NoChoice if no paper has green
+    int GreenOption()
+    {
+        foreach (Paper paper in papers)
+        {
+            if (paper.HasStamp && paper.StampColor == InkColor.Green)
+                return paper.Option;
+        }
+        return NoChoice;
     }
 
     // Takes the papers away. Later they will move away instead of disappearing.
